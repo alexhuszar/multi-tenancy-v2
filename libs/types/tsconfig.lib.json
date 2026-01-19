@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/libs/types",
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "src",
+    "composite": false,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}

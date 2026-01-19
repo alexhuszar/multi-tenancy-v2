@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/dist
 /.pnp
 .pnp.js
 
@@ -10,7 +11,15 @@
 
 # next.js
 /.next/
+*/.next
 /out/
+
+# nx
+*/nx/
+
+# Claude
+/.coverage/
+/.Claude/
 
 # production
 /build
