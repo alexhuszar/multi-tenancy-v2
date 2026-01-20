@@ -10,12 +10,13 @@
 /coverage
 
 # next.js
-/.next/
-*/.next
+apps/*/.next/
 /out/
 
 # nx
-*/nx/
+/.nx-cache
+/.nx/cache
+/.nx/workspace-data
 
 # Claude
 /.coverage/
