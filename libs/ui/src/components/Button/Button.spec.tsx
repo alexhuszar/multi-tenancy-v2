@@ -23,9 +23,14 @@ describe('Button internal functionality', () => {
     const user = userEvent.setup();
 
     const { rerender } = render(
-      <Button onClick={onClickSpy} disabled className="custom_className" tabIndex={0}>
+      <Button
+        onClick={onClickSpy}
+        disabled
+        className="custom_className"
+        tabIndex={0}
+      >
         Click me!
-      </Button>
+      </Button>,
     );
     const buttonComponent = screen.getByRole('button', {
       name: /Click me!/i,
@@ -55,7 +60,7 @@ describe('Button internal functionality', () => {
     rerender(
       <Button onClick={onClickSpy} className="custom_className">
         Click me!
-      </Button>
+      </Button>,
     );
 
     const buttonComponent2 = screen.getByRole('button', {
@@ -80,10 +85,11 @@ describe('Button internal functionality', () => {
         loadingIcon={<span data-testid="test-loading-icon"></span>}
       >
         Click me!
-      </Button>
+      </Button>,
     );
 
-    expect(screen.getByTestId('test-loading-icon')).toBeVisible();
-    // ✓ loading icon should be visible when isLoading is true and loadingIcon is provided
+    const loadingIcon = screen.getByRole('status');
+
+    expect(loadingIcon).toBeVisible();
   });
 });

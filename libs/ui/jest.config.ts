@@ -2,6 +2,7 @@ export default {
   displayName: 'ui',
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['../../jest.setup.ts'],
   transform: {
     '^.+\\.[tj]sx?$': [
       '@swc/jest',
