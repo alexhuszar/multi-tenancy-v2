@@ -1,4 +1,4 @@
-import type { ApiResponse } from '@multi-tenancy-v2/types';
+import type { ApiResponse } from '@multi-tenancy/types';
 
 export interface ApiClientConfig {
   baseUrl: string;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { ApiResponse } from '@multi-tenancy-v2/types';
+import type { ApiResponse } from '@multi-tenancy/types';
 
 interface UseFetchState<T> {
   data: T | null;

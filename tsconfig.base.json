@@ -16,13 +16,13 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@multi-tenancy-v2/source"],
+    "customConditions": ["@multi-tenancy/source"],
     "baseUrl": ".",
     "paths": {
-      "@multi-tenancy-v2/types": ["libs/types/src/index.ts"],
-      "@multi-tenancy-v2/utils": ["libs/utils/src/index.ts"],
-      "@multi-tenancy-v2/ui": ["libs/ui/src/index.ts"],
-      "@multi-tenancy-v2/data-access": ["libs/data-access/src/index.ts"]
+      "@multi-tenancy/types": ["libs/types/src/index.ts"],
+      "@multi-tenancy/utils": ["libs/utils/src/index.ts"],
+      "@multi-tenancy/design-system": ["libs/ui/src/index.ts"],
+      "@multi-tenancy/data-access": ["libs/data-access/src/index.ts"]
     }
   }
 }

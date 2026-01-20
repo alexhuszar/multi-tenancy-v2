@@ -9,8 +9,8 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@multi-tenancy-v2/types": ["../../dist/libs/types/src/index.d.ts"],
-      "@multi-tenancy-v2/utils": ["../../dist/libs/utils/src/index.d.ts"]
+      "@multi-tenancy/types": ["../../dist/libs/types/src/index.d.ts"],
+      "@multi-tenancy/utils": ["../../dist/libs/utils/src/index.d.ts"]
     }
   },
   "exclude": [

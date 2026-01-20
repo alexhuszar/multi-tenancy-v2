@@ -6,7 +6,9 @@ export default {
     '^.+\\.[tj]sx?$': [
       '@swc/jest',
       {
+        swcrc: false,
         jsc: {
+          target: 'es2022',
           parser: { syntax: 'typescript', tsx: true },
           transform: { react: { runtime: 'automatic' } },
         },

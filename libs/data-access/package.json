@@ -1,5 +1,5 @@
 {
-  "name": "@multi-tenancy-v2/data-access",
+  "name": "@multi-tenancy/data-access",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -8,6 +8,10 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "@multi-tenancy/source": {
+        "types": "./src/index.ts",
+        "default": "./src/index.ts"
+      },
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"

@@ -1,5 +1,5 @@
 {
-  "name": "@multi-tenancy-v2/dataroom",
+  "name": "@multi-tenancy/dataroom",
   "version": "0.0.1",
   "private": true,
   "dependencies": {

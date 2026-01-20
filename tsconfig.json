@@ -21,5 +21,8 @@
     {
       "path": "./libs/data-access"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "baseUrl": "."
+  }
 }

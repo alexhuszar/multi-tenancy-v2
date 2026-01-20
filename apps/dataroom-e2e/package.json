@@ -1,10 +1,10 @@
 {
-  "name": "@multi-tenancy-v2/dataroom-e2e",
+  "name": "@multi-tenancy/dataroom-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
     "implicitDependencies": [
-      "@multi-tenancy-v2/dataroom"
+      "@multi-tenancy/dataroom"
     ]
   }
 }

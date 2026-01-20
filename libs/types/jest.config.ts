@@ -1,5 +1,5 @@
 export default {
-  displayName: 'utils',
+  displayName: 'types',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
@@ -15,5 +15,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js'],
-  coverageDirectory: '../../coverage/libs/utils',
+  coverageDirectory: '../../coverage/libs/types',
 };

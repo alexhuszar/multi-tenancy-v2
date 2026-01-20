@@ -1,10 +1,4 @@
-# MultiTenancyV2
-
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
-
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
-
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+# Multi tenancy - Version2
 
 ## Project Structure
 
@@ -27,26 +21,54 @@ This monorepo includes four buildable shared libraries:
 
 | Library | Package Name | Description |
 |---------|--------------|-------------|
-| **types** | `@multi-tenancy-v2/types` | Shared TypeScript types (User, Tenant, ApiResponse) |
-| **utils** | `@multi-tenancy-v2/utils` | Utility functions (formatters, validators) |
-| **ui** | `@multi-tenancy-v2/ui` | Shared React components (Button, etc.) |
-| **data-access** | `@multi-tenancy-v2/data-access` | API client and data fetching hooks |
+| **types** | `@multi-tenancy/types` | Shared TypeScript types (User, Tenant, ApiResponse) |
+| **utils** | `@multi-tenancy/utils` | Utility functions (formatters, validators) |
+| **ui** | `@multi-tenancy/design-system` | Shared React components (Button, etc.) |
+| **data-access** | `@multi-tenancy/data-access` | API client and data fetching hooks |
 
 ### Using Libraries in Your App
 
 ```typescript
 // Import types
-import type { User, Tenant, ApiResponse } from '@multi-tenancy-v2/types';
+import type { User, Tenant, ApiResponse } from '@multi-tenancy/types';
 
 // Import utilities
-import { formatDate, formatCurrency, isValidEmail } from '@multi-tenancy-v2/utils';
+import { formatDate, formatCurrency, isValidEmail } from '@multi-tenancy/utils';
 
 // Import UI components
-import { Button } from '@multi-tenancy-v2/ui';
+import { Button } from '@multi-tenancy/design-system';
 
 // Import data access hooks
-import { useFetch, ApiClient, initializeApiClient } from '@multi-tenancy-v2/data-access';
+import { useFetch, ApiClient, initializeApiClient } from '@multi-tenancy/data-access';
 ```
+
+### TypeScript Configuration
+
+The monorepo uses TypeScript path aliases to resolve library imports:
+
+- **Development**: Imports resolve to source files (`libs/*/src/index.ts`) via tsconfig paths
+- **Production build**: Imports resolve to built files (`dist/`) via package.json exports
+
+Each library's `package.json` includes a custom export condition (`@multi-tenancy/source`) that points to source files. This is configured in `tsconfig.base.json` via `customConditions`.
+
+**Important**: When creating new apps, you must include the library path aliases in the app's `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@multi-tenancy/types": ["../../libs/types/src/index.ts"],
+      "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
+      "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
+      "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
+    }
+  }
+}
+```
+
+This is required because TypeScript `paths` don't merge when extending configs - they override completely.
 
 ### Library Dependency Graph
 
@@ -92,6 +114,8 @@ npx nx build data-access
 
 ### Run Tests
 
+This project uses **Jest** with **React Testing Library** for unit testing.
+
 Run all tests:
 
 ```sh
@@ -102,6 +126,57 @@ Run library tests only:
 
 ```sh
 npm run test:libs
+```
+
+Run tests for a specific library:
+
+```sh
+npx nx test design-system
+npx nx test utils
+npx nx test types
+npx nx test data-access
+```
+
+#### Testing Stack
+
+| Package | Purpose |
+|---------|---------|
+| `jest` | Test runner |
+| `@swc/jest` | Fast TypeScript/JSX transformation |
+| `jest-environment-jsdom` | DOM environment for React components |
+| `@testing-library/react` | React component testing utilities |
+| `@testing-library/user-event` | User interaction simulation |
+| `@testing-library/jest-dom` | Custom Jest matchers for DOM assertions |
+
+#### Writing Tests
+
+Test files should be placed next to the source files with `.spec.ts` or `.spec.tsx` extension:
+
+```
+libs/ui/src/components/Button/
+├── Button.tsx
+├── Button.spec.tsx    # Test file
+└── index.ts
+```
+
+Example test:
+
+```tsx
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Button } from './Button';
+
+describe('Button', () => {
+  it('should call onClick when clicked', async () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+
+    await userEvent.click(screen.getByRole('button'));
+
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
 ```
 
 ### Lint and Type Check
@@ -151,13 +226,17 @@ nx g @nx/next:library ui
 
 # Add a component
 nx g @nx/next:component ui/src/lib/button
+```
+
+## View project details
 
 
-## ▶️ View project details
-nx show project @multi-tenancy-v2/dataroom --web
+```bash
+nx show project @multi-tenancy/dataroom --web
+```
 
-
-## ▶️ Run affected commands
+## Run affected commands
+```bash
 # see what's been affected by changes
 nx affected:graph
 
@@ -166,9 +245,7 @@ nx affected:test
 
 # run e2e tests for current changes
 nx affected:e2e
-
-
-
+```
 
 ## Set up CI!
 
@@ -196,24 +273,3 @@ npx nx g ci-workflow
 ```
 
 [Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)

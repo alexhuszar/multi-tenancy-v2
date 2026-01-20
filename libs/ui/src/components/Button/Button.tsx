@@ -1,44 +1,55 @@
 import React, { forwardRef, ButtonHTMLAttributes, ReactElement } from 'react';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  internal: {
-    className: string;
+type BaseProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'disabled'>;
+
+type LoadingProps =
+  | {
+      isLoading?: false;
+      loadingIcon?: never;
+    }
+  | {
+      isLoading: true;
+      loadingIcon: ReactElement;
+    };
+
+export type ButtonProps = BaseProps &
+  LoadingProps & {
+    children: React.ReactNode;
+    disabled?: boolean;
   };
-  external:
-    | {
-        disabled?: boolean;
-        isLoading?: never;
-        loadingIcon?: never;
-        tabIndex?: number;
-        children: React.ReactNode;
-        onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-      }
-    | {
-        disabled?: boolean;
-        isLoading: boolean;
-        loadingIcon: ReactElement;
-        tabIndex?: number;
-        children: React.ReactNode;
-        onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-      };
-}
 
-export const Button = forwardRef<
-  HTMLButtonElement,
-  ButtonProps['internal'] & ButtonProps['external']
->((props, buttonRef) => {
-  const { children, tabIndex = 0, isLoading, loadingIcon, ...rest } = props;
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (props, buttonRef) => {
+    const {
+      children,
+      isLoading,
+      loadingIcon,
+      disabled,
+      className,
+      type = 'button',
+      ...rest
+    } = props;
 
-  return (
-    <button
-      data-testid="button"
-      ref={buttonRef}
-      tabIndex={tabIndex}
-      type="button"
-      {...rest}
-    >
-      {children}
-      {isLoading && loadingIcon}
-    </button>
-  );
-});
+    const isDisabled = disabled || isLoading;
+
+    return (
+      <button
+        ref={buttonRef}
+        type={type}
+        disabled={isDisabled}
+        aria-busy={isLoading || undefined}
+        data-testid="button"
+        className={className}
+        {...rest}
+      >
+        <span aria-hidden={isLoading}>{children}</span>
+
+        {isLoading && (
+          <span role="status" aria-live="polite" aria-label="Loading">
+            {loadingIcon}
+          </span>
+        )}
+      </button>
+    );
+  },
+);
