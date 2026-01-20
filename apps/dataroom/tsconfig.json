@@ -17,24 +17,18 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@multi-tenancy-v2/types": ["../../libs/types/src/index.ts"],
-      "@multi-tenancy-v2/utils": ["../../libs/utils/src/index.ts"],
-      "@multi-tenancy-v2/ui": ["../../libs/ui/src/index.ts"],
-      "@multi-tenancy-v2/data-access": ["../../libs/data-access/src/index.ts"]
+      "@/*": ["./*"]
     },
-    "types": ["jest", "node"],
     "outDir": "dist",
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    "rootDir": "."
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "../../apps/multi-tenancy-v2/.next/types/**/*.ts",
-    "../../dist/apps/multi-tenancy-v2/.next/types/**/*.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "app/**/*.js",
+    "app/**/*.jsx",
+    "../../apps/dataroom/.next/types/**/*.ts",
+    "../../dist/apps/dataroom/.next/types/**/*.ts",
     "next-env.d.ts"
   ],
   "exclude": [
@@ -43,12 +37,11 @@
     "node_modules",
     "jest.config.ts",
     "jest.config.cts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
+    "app/**/*.spec.ts",
+    "app/**/*.test.ts",
     ".next",
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
-  ],
-  "references": []
+  ]
 }

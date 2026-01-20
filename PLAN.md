@@ -179,7 +179,7 @@ nx run-many --target=build --projects=tag:type:lib
 nx build ui
 
 # Build app (auto-builds lib dependencies)
-nx build multi-tenancy-v2
+nx build dataroom
 
 # Watch mode for library development
 nx watch --projects=ui,utils,data-access,types -- nx build $NX_PROJECT_NAME
@@ -190,9 +190,9 @@ nx watch --projects=ui,utils,data-access,types -- nx build $NX_PROJECT_NAME
 2. Run `nx build utils` - should succeed (builds types first)
 3. Run `nx build ui` - should succeed
 4. Run `nx build data-access` - should succeed
-5. Run `nx build multi-tenancy-v2` - should succeed with libs
+5. Run `nx build dataroom` - should succeed with libs
 6. Run `nx graph` - verify dependency graph is correct
-7. Run `nx dev multi-tenancy-v2` - verify imports work in development
+7. Run `nx dev dataroom` - verify imports work in development
 
 ## Files to Modify
 - `package.json` - Add libs/* workspace, build scripts

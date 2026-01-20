@@ -11,8 +11,8 @@
 ```
 multi-tenancy-v2/
 ├── apps/
-│   ├── multi-tenancy-v2/          # Main Next.js application
-│   └── multi-tenancy-v2-e2e/      # E2E tests (Playwright)
+│   ├── dataroom/          # Main Next.js application
+│   └── dataroom-e2e/      # E2E tests (Playwright)
 ├── libs/
 │   ├── types/                      # Shared TypeScript types
 │   ├── utils/                      # Utility functions
@@ -62,13 +62,13 @@ types (no dependencies)
 To run the dev server for your app, use:
 
 ```sh
-npx nx dev multi-tenancy-v2
+npx nx dev dataroom
 ```
 
 To create a production bundle:
 
 ```sh
-npx nx build multi-tenancy-v2
+npx nx build dataroom
 ```
 
 ### Build Libraries
@@ -114,7 +114,7 @@ npm run typecheck
 To see all available targets to run for a project, run:
 
 ```sh
-npx nx show project multi-tenancy-v2
+npx nx show project dataroom
 ```
 
 These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
@@ -142,6 +142,33 @@ npx nx g @nx/react:lib mylib
 You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
 
 [Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+## Add UI library
+
+```bash
+# Generate UI lib
+nx g @nx/next:library ui
+
+# Add a component
+nx g @nx/next:component ui/src/lib/button
+
+
+## ▶️ View project details
+nx show project @multi-tenancy-v2/dataroom --web
+
+
+## ▶️ Run affected commands
+# see what's been affected by changes
+nx affected:graph
+
+# run tests for current changes
+nx affected:test
+
+# run e2e tests for current changes
+nx affected:e2e
+
+
+
 
 ## Set up CI!
 
