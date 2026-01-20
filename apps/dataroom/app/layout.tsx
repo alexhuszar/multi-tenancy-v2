@@ -1,19 +1,21 @@
-import { NavigationBar } from '@multi-tenancy/design-system';
-import './global.css';
+import type { Metadata } from 'next';
+import './globals.css';
 
-export const metadata = {
-  title: 'Dataroom',
-  description: 'Manage your files the best way in a virtual DataRoom',
+export const metadata: Metadata = {
+  title: 'DataRoom',
+  description: 'DataRoom - The only storage solution you need.',
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body><NavigationBar title={metadata.title}/>{children}</body>
+      <body className="antialiased">
+        {children}
+      </body>
     </html>
   );
 }
