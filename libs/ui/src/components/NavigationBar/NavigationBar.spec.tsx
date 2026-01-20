@@ -1,52 +1,43 @@
-import {render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { NavigationBar } from './NavigationBar';
 
 describe('NavigationBar', () => {
-  test('renders correctly with title', () => {
-    render(<NavigationBar className="navigation-bar" title="Sample title" />);
-
-    const nav = screen.getByRole('navigation', { name: /main navigation/i });
-    expect(nav).toBeInTheDocument();
-
-    const title = screen.getByRole('heading', { name: 'Sample title' });
-    expect(title).toBeInTheDocument();
-  });
-
-  test('renders NavigationLeftSlot and NavigationRightSlot', () => {
+  test(`behavior:
+        ✓ renders title
+        ✓ renders NavigationLeftSlot and NavigationRightSlot
+        ✓ renders custom className and titleClassName
+        ✓ does not render title when title prop is missing`, () => {
     render(
       <NavigationBar
-        className="navigation-bar"
+        className="custom_className"
+        titleClassName="custom_className_input"
         title="Sample title"
         NavigationLeftSlot={<button>Back</button>}
         NavigationRightSlot={<button>Close</button>}
       />,
     );
 
+    const nav = screen.getByRole('navigation', { name: /main navigation/i });
+    expect(nav).toBeInTheDocument();
+
+    const title = screen.getByRole('heading', { name: 'Sample title' });
+    expect(title).toBeInTheDocument();
+
     const leftButton = screen.getByRole('button', { name: 'Back' });
     const rightButton = screen.getByRole('button', { name: 'Close' });
 
     expect(leftButton).toBeInTheDocument();
     expect(rightButton).toBeInTheDocument();
-  });
 
-  test('applies custom className and titleClassName', () => {
-    render(
-      <NavigationBar
-        className="custom_className"
-        titleClassName="custom_className_input"
-        title="Sample title 2"
-      />,
-    );
-
-    const list = screen.getByRole('list'); 
+    const list = screen.getByRole('list');
     expect(list.className).toContain('custom_className');
 
-    const title = screen.getByRole('heading', { name: 'Sample title 2' });
     expect(title.className).toContain('custom_className_input');
-  });
+    
+    cleanup();
 
-  test('does not render title when title prop is missing', () => {
     render(<NavigationBar className="navigation-bar" />);
+
     const titles = screen.queryByRole('heading');
     expect(titles).toBeNull();
   });

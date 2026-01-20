@@ -9,15 +9,15 @@ describe('Button internal functionality', () => {
   });
 
   test(`behavior:
-      ✓ render with correct className
-      ✓ display correct label
-      ✓ type = button
-      ✓ tabindex = 0
-      ✓ disabled attribute present
-      ✓ should not call onClick when disabled
-      ✓ disabled attribute not present
-      ✓ should call onClick when enabled
-      ✓ loading icon should be visible when isLoading is true and loadingIcon is provided`, async () => {
+        ✓ render with correct className
+        ✓ display correct label
+        ✓ type = button
+        ✓ tabindex = 0
+        ✓ disabled attribute present
+        ✓ should not call onClick when disabled
+        ✓ disabled attribute not present
+        ✓ should call onClick when enabled
+        ✓ loading icon should be visible when isLoading is true and loadingIcon is provided`, async () => {
     const onClickSpy = jest.fn();
 
     const user = userEvent.setup();
