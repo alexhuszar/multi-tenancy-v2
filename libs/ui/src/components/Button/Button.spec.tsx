@@ -36,26 +36,20 @@ describe('Button internal functionality', () => {
       name: /Click me!/i,
     });
 
-    // render with correct className
-    expect(buttonComponent.className).toBe('custom_className');
 
-    // display correct label
+    expect(buttonComponent).toHaveClass('custom_className');
 
     expect(buttonComponent).toHaveAttribute('type', 'button');
-    // ✓ type = button
 
     expect(buttonComponent).toHaveAttribute('tabindex', '0');
-    // ✓  tabindex = 0
 
     expect(buttonComponent).toHaveAttribute('disabled');
-    // ✓ disabled attribute present
 
     expect(onClickSpy).not.toHaveBeenCalled();
 
     await user.click(buttonComponent);
 
     expect(onClickSpy).toHaveBeenCalledTimes(0);
-    // ✓ should not call onClick when disabled
 
     rerender(
       <Button onClick={onClickSpy} className="custom_className">
@@ -68,14 +62,11 @@ describe('Button internal functionality', () => {
     });
 
     expect(buttonComponent2.getAttribute('disabled')).toBe(null);
-    // ✓ disabled attribute not present
-
     expect(onClickSpy).not.toHaveBeenCalled();
 
     await user.click(buttonComponent2);
 
     expect(onClickSpy).toHaveBeenCalledTimes(1);
-    // ✓ should call onClick when enabled
 
     rerender(
       <Button

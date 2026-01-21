@@ -30,9 +30,9 @@ describe('NavigationBar', () => {
     expect(rightButton).toBeInTheDocument();
 
     const list = screen.getByRole('list');
-    expect(list.className).toContain('custom_className');
+    expect(list).toHaveClass('custom_className');
 
-    expect(title.className).toContain('custom_className_input');
+    expect(title).toHaveClass('custom_className_input');
     
     cleanup();
 

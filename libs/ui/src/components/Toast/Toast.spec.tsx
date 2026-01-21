@@ -29,7 +29,7 @@ describe('Toast', () => {
     );
 
     const list = screen.getByRole('list');
-    expect(list.getElementsByTagName('li')[0].className).toContain(
+    expect(list.getElementsByTagName('li')[0]).toHaveClass(
       'custom_className',
     );
 

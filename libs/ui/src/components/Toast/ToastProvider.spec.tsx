@@ -15,7 +15,7 @@ describe('ToastProvider', () => {
     );
 
     const list = screen.getByRole('list');
-    expect(list.className).toEqual('custom_viewport');
+    expect(list).toHaveClass('custom_viewport');
 
     expect(screen.queryByText('TOASTER CHILDREN')).toBeVisible();
   });

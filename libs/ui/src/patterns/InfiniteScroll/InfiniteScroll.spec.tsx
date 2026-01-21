@@ -18,7 +18,7 @@ describe('InfiniteScroll (pattern)', () => {
     jest.clearAllMocks();
   });
 
-  test(`behavior
+  test(`behavior:
           ✓ renders items
           ✓ observes sentinel
           ✓ calls onLoadMore on intersect

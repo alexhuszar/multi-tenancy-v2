@@ -18,7 +18,7 @@ describe('Breadcrumbs', () => {
     const navElement = screen.getByRole('navigation', {
       name: /breadcrumb/i,
     });
-    expect(navElement.className).toBe('custom_className');
+    expect(navElement).toHaveClass('custom_className');
 
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Stock')).toBeInTheDocument();
