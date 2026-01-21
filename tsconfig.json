@@ -20,6 +20,12 @@
     },
     {
       "path": "./libs/data-access"
+    },
+    {
+      "path": "./apps/cryptocurrency-e2e"
+    },
+    {
+      "path": "./apps/cryptocurrency"
     }
   ],
   "compilerOptions": {
