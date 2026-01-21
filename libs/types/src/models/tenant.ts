@@ -1,3 +1,6 @@
+import { PartialDesignTokens, DeepPartial, SemanticTokens } from '../tokens';
+import { FeatureFlag } from '../features';
+
 export interface Tenant {
   id: string;
   name: string;
@@ -9,11 +12,22 @@ export interface Tenant {
 }
 
 export interface TenantSettings {
-  theme?: {
-    primaryColor: string;
-    logo?: string;
-  };
-  features?: string[];
+  theme?: TenantThemeSettings;
+  features?: FeatureFlag[];
+  branding?: TenantBrandingSettings;
+}
+
+export interface TenantThemeSettings {
+  tokenOverrides?: PartialDesignTokens;
+  semanticOverrides?: DeepPartial<SemanticTokens>;
+  defaultMode?: 'light' | 'dark' | 'system';
+}
+
+export interface TenantBrandingSettings {
+  logo?: string;
+  logoAlt?: string;
+  favicon?: string;
+  appName?: string;
 }
 
 export interface TenantCreateInput {

@@ -6,14 +6,20 @@
     "declarationMap": true,
     "rootDir": "src",
     "composite": false,
-    "types": ["node"], 
+    "types": ["node"]
   },
   "exclude": [
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "jest.config.ts"
+    "jest.config.ts",
+    "src/utils-test/**/*"
   ],
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "references": [
+    {
+      "path": "../foundation/tsconfig.lib.json"
+    }
+  ]
 }

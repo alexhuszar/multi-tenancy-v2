@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/index.ts"],"sourcesContent":["// Tenant configurations\nexport * from './default';\nexport * from './dataroom';\nexport * from './cryptocurrency';\n\n// Registry\nexport * from './registry';\n"],"names":[],"rangeMappings":";;;;;","mappings":"AAAA,wBAAwB;AACxB,cAAc,YAAY;AAC1B,cAAc,aAAa;AAC3B,cAAc,mBAAmB;AAEjC,WAAW;AACX,cAAc,aAAa"}

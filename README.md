@@ -1,161 +1,260 @@
-# Multi tenancy - Version2
+# Multi-Tenancy V2
+
+A multi-tenant design system built with Nx, Next.js, and React. Features framework-agnostic design tokens, CSS variable-based theming, and type-safe feature flags.
 
 ## Project Structure
 
 ```
 multi-tenancy-v2/
 ├── apps/
-│   ├── dataroom/          # Main Next.js application
-│   └── dataroom-e2e/      # E2E tests (Playwright)
+│   ├── dataroom/              # Main Next.js application
+│   └── dataroom-e2e/          # E2E tests (Playwright)
+│
 ├── libs/
-│   ├── types/                      # Shared TypeScript types
-│   ├── utils/                      # Utility functions
-│   ├── ui/                         # Shared React components
-│   └── data-access/                # API clients and data hooks
-└── dist/                           # Build outputs
+│   ├── foundation/            # Design system foundation
+│   │   ├── tokens/            # Design tokens (no React)
+│   │   │   ├── base/          # Base color, typography, spacing, etc.
+│   │   │   └── semantic/      # Light/dark mode semantic mappings
+│   │   ├── themes/            # Theme composition logic
+│   │   └── css/               # CSS variable generation
+│   │
+│   ├── ui/                    # Pure, theme-driven components
+│   │   ├── components/        # Button, Dialog, Toast, etc.
+│   │   ├── primitives/        # Box, Text, Stack, Flex
+│   │   ├── patterns/          # InfiniteScroll, Sheet
+│   │   ├── providers/         # ThemeProvider
+│   │   └── hooks/             # useInfiniteScroll, etc.
+│   │
+│   ├── tenants/               # Tenant configuration
+│   │   ├── dataroom/          # DataRoom tenant (blue theme)
+│   │   ├── cryptocurrency/    # CryptoVault tenant (golden theme)
+│   │   └── default/           # Default fallback config
+│   │
+│   ├── config/                # Shared configuration
+│   │   ├── env.ts             # Environment utilities
+│   │   └── feature-flags.ts   # Type-safe feature flags
+│   │
+│   ├── types/                 # Shared TypeScript types
+│   ├── utils/                 # Utility functions
+│   └── data-access/           # API clients and data hooks
+│
+└── dist/                      # Build outputs
 ```
 
 ## Shared Libraries
 
-This monorepo includes four buildable shared libraries:
-
 | Library | Package Name | Description |
 |---------|--------------|-------------|
-| **types** | `@multi-tenancy/types` | Shared TypeScript types (User, Tenant, ApiResponse) |
-| **utils** | `@multi-tenancy/utils` | Utility functions (formatters, validators) |
-| **ui** | `@multi-tenancy/design-system` | Shared React components (Button, etc.) |
+| **foundation** | `@multi-tenancy/foundation` | Design tokens, themes, CSS variable generation |
+| **ui** | `@multi-tenancy/design-system` | React components with CSS variable theming |
+| **tenants** | `@multi-tenancy/tenants` | Tenant-specific theme and feature configuration |
+| **config** | `@multi-tenancy/config` | Environment and feature flag utilities |
+| **types** | `@multi-tenancy/types` | Shared TypeScript types |
+| **utils** | `@multi-tenancy/utils` | Utility functions |
 | **data-access** | `@multi-tenancy/data-access` | API client and data fetching hooks |
 
-### Using Libraries in Your App
+## Multi-Tenancy Theming
+
+### How It Works
+
+1. **Design Tokens** (`@multi-tenancy/foundation`): Framework-agnostic token definitions for colors, typography, spacing, etc.
+
+2. **Tenant Overrides** (`@multi-tenancy/tenants`): Each tenant can override base tokens with custom colors and branding.
+
+3. **Theme Composition**: The `composeTheme()` function merges base tokens with tenant overrides.
+
+4. **CSS Variables**: The `ThemeProvider` injects CSS variables at runtime, enabling dynamic theming.
+
+5. **Component Styling**: Components use CSS variables like `var(--semantic-interactive-default)` for colors.
+
+### Adding a New Tenant
+
+1. Create a new folder in `libs/tenants/src/`:
+
+```typescript
+// libs/tenants/src/my-tenant/theme.ts
+import type { TenantThemeConfig } from '@multi-tenancy/types';
+
+export const myTenantThemeConfig: TenantThemeConfig = {
+  tenantId: 'my-tenant',
+  tokenOverrides: {
+    colors: {
+      primary: {
+        500: '#your-brand-color',
+        // ... other shades
+      },
+    },
+  },
+};
+```
+
+2. Create features and branding files:
+
+```typescript
+// libs/tenants/src/my-tenant/features.ts
+import { FEATURE_FLAGS } from '@multi-tenancy/types';
+
+export const myTenantFeatures = [
+  FEATURE_FLAGS.DARK_MODE,
+  FEATURE_FLAGS.CUSTOM_BRANDING,
+];
+
+// libs/tenants/src/my-tenant/branding.ts
+export const myTenantBranding = {
+  logo: '/tenants/my-tenant/logo.svg',
+  appName: 'My Tenant App',
+};
+```
+
+3. Register the tenant in `libs/tenants/src/registry.ts`.
+
+### Using the Theme in Components
+
+```tsx
+// Using CSS variables directly
+const buttonStyle = {
+  backgroundColor: 'var(--semantic-interactive-default)',
+  color: 'var(--semantic-foreground-inverse)',
+};
+
+// Using Tailwind with CSS variable mapping
+<button className="bg-interactive text-foreground-inverse">
+  Click me
+</button>
+
+// Using the useTheme hook
+import { useTheme } from '@multi-tenancy/design-system';
+
+function MyComponent() {
+  const { theme, mode, setMode, resolvedMode } = useTheme();
+  // ...
+}
+```
+
+## Using Libraries in Your App
 
 ```typescript
 // Import types
-import type { User, Tenant, ApiResponse } from '@multi-tenancy/types';
+import type { User, Tenant, FeatureFlag } from '@multi-tenancy/types';
+
+// Import foundation
+import { composeTheme, generateThemeCSS, baseTokens } from '@multi-tenancy/foundation';
+
+// Import UI components
+import { Button, ThemeProvider, Box, Text, Stack } from '@multi-tenancy/design-system';
+
+// Import tenant config
+import { getTenantConfig, getTenantSettings } from '@multi-tenancy/tenants';
+
+// Import config utilities
+import { resolveFeatureFlags, isFeatureEnabled, createEnvConfig } from '@multi-tenancy/config';
 
 // Import utilities
 import { formatDate, formatCurrency, isValidEmail } from '@multi-tenancy/utils';
 
-// Import UI components
-import { Button } from '@multi-tenancy/design-system';
-
 // Import data access hooks
-import { useFetch, ApiClient, initializeApiClient } from '@multi-tenancy/data-access';
+import { useFetch, ApiClient } from '@multi-tenancy/data-access';
 ```
 
-### TypeScript Configuration
+## Library Dependency Graph
 
-The monorepo uses TypeScript path aliases to resolve library imports:
+```
+types ──────────────────────────────────┐
+   │                                    │
+   ├──→ foundation                      │
+   │         │                          │
+   ├──→ config                          │
+   │         │                          │
+   └──→ utils ───────────────┐          │
+                             │          │
+         tenants ←───────────┴──────────┘
+            │
+     ┌──────┴──────┐
+     │             │
+     ui        data-access
+     │             │
+     └──────┬──────┘
+            │
+        dataroom
+```
 
-- **Development**: Imports resolve to source files (`libs/*/src/index.ts`) via tsconfig paths
-- **Production build**: Imports resolve to built files (`dist/`) via package.json exports
+## Run Tasks
 
-Each library's `package.json` includes a custom export condition (`@multi-tenancy/source`) that points to source files. This is configured in `tsconfig.base.json` via `customConditions`.
+### Development
 
-**Important**: When creating new apps, you must include the library path aliases in the app's `tsconfig.json`:
+```sh
+# Start the dev server
+npx nx dev dataroom
 
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"],
-      "@multi-tenancy/types": ["../../libs/types/src/index.ts"],
-      "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
-      "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
-      "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
-    }
-  }
+# Start with a specific tenant
+TENANT_ID=cryptocurrency npx nx dev dataroom
+```
+
+### Build
+
+```sh
+# Build the app
+npx nx build @multi-tenancy/dataroom
+
+# Build all libraries
+npx nx run-many --target=build --projects=types,foundation,config,tenants,design-system
+```
+
+### Test
+
+```sh
+# Run all tests
+npm run test
+
+# Run tests for a specific library
+npx nx test design-system
+npx nx test types
+```
+
+### Lint and Type Check
+
+```sh
+npm run lint
+npm run typecheck
+```
+
+## Feature Flags
+
+The feature flag system provides type-safe feature toggling per tenant.
+
+```typescript
+import { FEATURE_FLAGS, resolveFeatureFlags, isFeatureEnabled } from '@multi-tenancy/config';
+import { getTenantSettings } from '@multi-tenancy/tenants';
+
+const settings = getTenantSettings('dataroom');
+const flags = resolveFeatureFlags('dataroom', settings.features);
+
+if (isFeatureEnabled(flags, FEATURE_FLAGS.DARK_MODE)) {
+  // Enable dark mode toggle
 }
 ```
 
-This is required because TypeScript `paths` don't merge when extending configs - they override completely.
+### Available Feature Flags
 
-### Library Dependency Graph
+| Flag | Description |
+|------|-------------|
+| `DARK_MODE` | Enable dark/light mode toggle |
+| `ADVANCED_SEARCH` | Advanced search functionality |
+| `BULK_OPERATIONS` | Bulk file operations |
+| `ANALYTICS_DASHBOARD` | Analytics and reporting |
+| `CUSTOM_BRANDING` | Custom logo and branding |
+| `API_ACCESS` | External API access |
+| `SSO_LOGIN` | Single sign-on support |
+| `AUDIT_LOGS` | Audit logging |
 
-```
-types (no dependencies)
-  ├── utils (depends on types)
-  ├── ui (depends on types)
-  └── data-access (depends on types, utils)
-```
+## Testing
 
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx dev dataroom
-```
-
-To create a production bundle:
-
-```sh
-npx nx build dataroom
-```
-
-### Build Libraries
-
-Build all libraries:
-
-```sh
-npm run build:libs
-# or
-npx nx run-many --target=build --projects=tag:type:lib
-```
-
-Build a specific library:
-
-```sh
-npx nx build types
-npx nx build utils
-npx nx build ui
-npx nx build data-access
-```
-
-### Run Tests
-
-This project uses **Jest** with **React Testing Library** for unit testing.
-
-Run all tests:
-
-```sh
-npm run test
-```
-
-Run library tests only:
-
-```sh
-npm run test:libs
-```
-
-Run tests for a specific library:
-
-```sh
-npx nx test design-system
-npx nx test utils
-npx nx test types
-npx nx test data-access
-```
-
-#### Testing Stack
-
-| Package | Purpose |
-|---------|---------|
-| `jest` | Test runner |
-| `@swc/jest` | Fast TypeScript/JSX transformation |
-| `jest-environment-jsdom` | DOM environment for React components |
-| `@testing-library/react` | React component testing utilities |
-| `@testing-library/user-event` | User interaction simulation |
-| `@testing-library/jest-dom` | Custom Jest matchers for DOM assertions |
-
-#### Writing Tests
-
-Test files should be placed next to the source files with `.spec.ts` or `.spec.tsx` extension:
+Test files should be placed next to source files with `.spec.ts` or `.spec.tsx` extension:
 
 ```
 libs/ui/src/components/Button/
 ├── Button.tsx
-├── Button.spec.tsx    # Test file
+├── Button.spec.tsx
 └── index.ts
 ```
 
@@ -168,108 +267,35 @@ import userEvent from '@testing-library/user-event';
 import { Button } from './Button';
 
 describe('Button', () => {
-  it('should call onClick when clicked', async () => {
-    const handleClick = jest.fn();
-    render(<Button onClick={handleClick}>Click me</Button>);
-
-    await userEvent.click(screen.getByRole('button'));
-
-    expect(handleClick).toHaveBeenCalledTimes(1);
+  it('should render with primary variant', () => {
+    render(<Button variant="primary">Click me</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute('data-variant', 'primary');
   });
 });
 ```
 
-### Lint and Type Check
+## Add New Projects
 
 ```sh
-npm run lint
-npm run typecheck
-```
-
-To see all available targets to run for a project, run:
-
-```sh
-npx nx show project dataroom
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
+# Generate a new application
 npx nx g @nx/next:app demo
+
+# Generate a new library
+npx nx g @nx/js:library my-lib --directory=libs/my-lib --buildable --bundler=swc
 ```
 
-To generate a new library, use:
+## CI Setup
 
 ```sh
-npx nx g @nx/react:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add UI library
-
-```bash
-# Generate UI lib
-nx g @nx/next:library ui
-
-# Add a component
-nx g @nx/next:component ui/src/lib/button
-```
-
-## View project details
-
-
-```bash
-nx show project @multi-tenancy/dataroom --web
-```
-
-## Run affected commands
-```bash
-# see what's been affected by changes
-nx affected:graph
-
-# run tests for current changes
-nx affected:test
-
-# run e2e tests for current changes
-nx affected:e2e
-```
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
+# Connect to Nx Cloud
 npx nx connect
-```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
+# Configure CI workflow
 npx nx g ci-workflow
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Resources
+
+- [Nx Documentation](https://nx.dev)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)

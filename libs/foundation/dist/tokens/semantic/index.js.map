@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/tokens/semantic/index.ts"],"sourcesContent":["export { lightSemanticTokens } from './light';\nexport { darkSemanticTokens } from './dark';\n"],"names":["lightSemanticTokens","darkSemanticTokens"],"rangeMappings":";","mappings":"AAAA,SAASA,mBAAmB,QAAQ,UAAU;AAC9C,SAASC,kBAAkB,QAAQ,SAAS"}

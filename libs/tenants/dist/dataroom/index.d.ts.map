@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/dataroom/index.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,sBAAsB,CAAC;AAK3D,eAAO,MAAM,cAAc;;;;;CAK1B,CAAC;AAEF,wBAAgB,mBAAmB,IAAI,cAAc,CAUpD;AAED,OAAO,EAAE,mBAAmB,EAAE,MAAM,SAAS,CAAC;AAC9C,OAAO,EAAE,gBAAgB,EAAE,MAAM,YAAY,CAAC;AAC9C,OAAO,EAAE,gBAAgB,EAAE,MAAM,YAAY,CAAC"}

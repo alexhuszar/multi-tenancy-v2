@@ -12,8 +12,10 @@
         "outputPath": "dist/libs/ui",
         "main": "libs/ui/src/index.ts",
         "tsConfig": "libs/ui/tsconfig.lib.json",
-        "assets": ["libs/ui/*.md"]
-      }
+        "assets": ["libs/ui/*.md"],
+        "skipTypeCheck": true
+      },
+      "dependsOn": ["^build"]
     },
     "publish": {
       "executor": "nx:run-commands",

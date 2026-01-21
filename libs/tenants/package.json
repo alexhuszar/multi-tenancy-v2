@@ -1,0 +1,44 @@
+{
+  "name": "@multi-tenancy/tenants",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@multi-tenancy/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "sourceRoot": "libs/tenants/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "libs/tenants/dist",
+          "main": "libs/tenants/src/index.ts",
+          "tsConfig": "libs/tenants/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "scope:shared",
+      "type:lib",
+      "type:tenants"
+    ]
+  },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11"
+  }
+}

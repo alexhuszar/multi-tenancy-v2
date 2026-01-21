@@ -52,6 +52,9 @@
   ],
   "references": [
     {
+      "path": "../../libs/tenants"
+    },
+    {
       "path": "../../libs/ui"
     }
   ]

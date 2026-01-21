@@ -22,7 +22,10 @@
       "@multi-tenancy/types": ["libs/types/src/index.ts"],
       "@multi-tenancy/utils": ["libs/utils/src/index.ts"],
       "@multi-tenancy/design-system": ["libs/ui/src/index.ts"],
-      "@multi-tenancy/data-access": ["libs/data-access/src/index.ts"]
+      "@multi-tenancy/data-access": ["libs/data-access/src/index.ts"],
+      "@multi-tenancy/foundation": ["libs/foundation/src/index.ts"],
+      "@multi-tenancy/config": ["libs/config/src/index.ts"],
+      "@multi-tenancy/tenants": ["libs/tenants/src/index.ts"]
     }
   }
 }

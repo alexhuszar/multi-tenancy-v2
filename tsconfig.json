@@ -26,6 +26,15 @@
     },
     {
       "path": "./apps/cryptocurrency"
+    },
+    {
+      "path": "./libs/foundation"
+    },
+    {
+      "path": "./libs/config"
+    },
+    {
+      "path": "./libs/tenants"
     }
   ],
   "compilerOptions": {

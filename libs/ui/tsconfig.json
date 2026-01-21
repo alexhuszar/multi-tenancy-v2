@@ -20,5 +20,12 @@
     "**/*.test.ts",
     "**/*.test.tsx"
   ],
-  "references": []
+  "references": [
+    {
+      "path": "../foundation"
+    },
+    {
+      "path": "../types"
+    }
+  ]
 }

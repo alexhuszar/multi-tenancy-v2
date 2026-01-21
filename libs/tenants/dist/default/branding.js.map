@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/default/branding.ts"],"sourcesContent":["import type { TenantBrandingSettings } from '@multi-tenancy/types';\n\nexport const defaultBranding: TenantBrandingSettings = {\n  appName: 'Multi-Tenancy App',\n};\n"],"names":["defaultBranding","appName"],"rangeMappings":";;","mappings":"AAEA,OAAO,MAAMA,kBAA0C;IACrDC,SAAS;AACX,EAAE"}
