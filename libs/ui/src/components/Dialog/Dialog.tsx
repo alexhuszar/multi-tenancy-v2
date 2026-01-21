@@ -29,7 +29,7 @@ export const Dialog = ({
   overlayClassName,
   contentClassName,
 }: DialogProps) => (
-  <Root open={open} onOpenChange={onOpenChange}>
+  <Root open={open} onOpenChange={onOpenChange} key={id}>
     <Portal>
       <Overlay className={overlayClassName} role="presentation"/>
 

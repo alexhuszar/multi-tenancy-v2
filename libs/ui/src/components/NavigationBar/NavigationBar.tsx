@@ -1,5 +1,3 @@
-'use client';
-
 import { ReactElement, ReactNode } from 'react';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 
