@@ -7,19 +7,16 @@
       "path": "./apps/dataroom-e2e"
     },
     {
-      "path": "./apps/dataroom"
-    },
-    {
-      "path": "./libs/types"
-    },
-    {
       "path": "./libs/utils"
     },
     {
       "path": "./libs/ui"
     },
     {
-      "path": "./libs/data-access"
+      "path": "./apps/cryptocurrency-e2e"
+    },
+    {
+      "path": "./apps/cryptocurrency"
     }
   ],
   "compilerOptions": {
