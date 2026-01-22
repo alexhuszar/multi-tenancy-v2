@@ -4,6 +4,7 @@ import type {
   ButtonStyleProps,
   DialogStyleProps,
   ToastStyleProps,
+  ToastViewportStyleProps,
   SheetStyleProps,
   InputStyleProps,
   BreadcrumbsStyleProps,
@@ -66,6 +67,20 @@ export function createMaterializeAdapter(
         variant === 'warning' && 'yellow lighten-4 orange-text text-darken-4',
         className,
       );
+    },
+
+    getToastViewportStyles({
+      position = 'bottom-right',
+      className,
+    }: ToastViewportStyleProps): string {
+      const positions = {
+        'top-left': 'toast-top-left',
+        'top-right': 'toast-top-right',
+        'bottom-left': 'toast-bottom-left',
+        'bottom-right': 'toast-bottom-right',
+      };
+
+      return cn('toast-container', positions[position], className);
     },
 
     getSheetStyles({

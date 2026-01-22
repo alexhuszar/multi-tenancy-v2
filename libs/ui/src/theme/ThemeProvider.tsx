@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, ReactNode } from 'react';
 import { ThemeContext, ThemeContextValue } from './ThemeContext';
 import type { StyleAdapter } from '../adapters/types';
@@ -10,24 +12,6 @@ export interface ThemeProviderProps {
   children: ReactNode;
 }
 
-/**
- * Theme Provider
- * Wraps the application to provide adapter and tokens via context
- *
- * @example
- * ```tsx
- * import { ThemeProvider } from '@multi-tenancy/design-system';
- * import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
- *
- * export default function Layout({ children }) {
- *   return (
- *     <ThemeProvider adapter={tailwindAdapter}>
- *       {children}
- *     </ThemeProvider>
- *   );
- * }
- * ```
- */
 export function ThemeProvider({
   adapter,
   tokens = defaultDesignTokens,

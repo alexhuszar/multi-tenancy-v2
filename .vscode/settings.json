@@ -1,0 +1,20 @@
+{
+  "tailwindCSS.experimental.configFile": {
+    "apps/dataroom/tailwind.config.js": "apps/dataroom/**",
+    "apps/cryptocurrency/tailwind.config.js": "apps/cryptocurrency/**"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`)]*?)(?:'|\"|`)"],
+    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`)]*?)(?:'|\"|`)"],
+    ["twMerge\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`)]*?)(?:'|\"|`)"],
+    ["cva\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`)]*?)(?:'|\"|`)"],
+    "(?:className|contentClassName|wrapperClassName)\\s*=\\s*['\"`]([^'\"`]*)['\"`]"
+  ],
+  "editor.quickSuggestions": {
+    "strings": "on"
+  }
+}

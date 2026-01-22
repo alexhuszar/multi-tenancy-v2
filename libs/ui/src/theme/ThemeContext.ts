@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext } from 'react';
 import type { StyleAdapter } from '../adapters/types';
 import type { DesignTokens } from '../tokens/types';
