@@ -13,7 +13,8 @@
     "**/*.spec.tsx",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "jest.config.ts"
+    "jest.config.ts",
+    "src/utils-test/**/*"
   ],
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
