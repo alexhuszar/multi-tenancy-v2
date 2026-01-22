@@ -31,12 +31,9 @@ export const Dialog = ({
 }: DialogProps) => (
   <Root open={open} onOpenChange={onOpenChange} key={id}>
     <Portal>
-      <Overlay className={overlayClassName} role="presentation"/>
+      <Overlay className={overlayClassName} role="presentation" />
 
-      <Content
-        className={contentClassName}
-        aria-describedby={undefined}
-      >
+      <Content className={contentClassName} aria-describedby={undefined}>
         <Title role="heading" aria-level={2}>
           {title}
         </Title>

@@ -9,10 +9,10 @@ interface RootProviderProps {
   children: ReactNode;
 }
 
-export function RootProvider({ children }: RootProviderProps) {
+export const RootProvider = ({ children }: RootProviderProps) => {
   return (
     <ThemeProvider adapter={tailwindAdapter}>
       <ToastRenderer>{children}</ToastRenderer>
     </ThemeProvider>
   );
-}
+};

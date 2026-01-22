@@ -12,11 +12,11 @@ export interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({
+export const ThemeProvider = ({
   adapter,
   tokens = defaultDesignTokens,
   children,
-}: ThemeProviderProps) {
+}: ThemeProviderProps) => {
   const value = useMemo<ThemeContextValue>(
     () => ({ adapter, tokens }),
     [adapter, tokens],
@@ -25,4 +25,6 @@ export function ThemeProvider({
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
-}
+};
+
+ThemeProvider.displayName = 'ThemeProvider';

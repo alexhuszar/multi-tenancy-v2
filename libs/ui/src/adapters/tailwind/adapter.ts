@@ -82,11 +82,11 @@ export function createTailwindAdapter(
       className,
     }: ToastStyleProps): string {
       return cn(
-        'flex  gap-4 p-2 rounded-md shadow-lg border flex-col text-gray-900',
+        'flex gap-4 p-2 rounded-md shadow-lg border flex-col text-gray-900',
 
-        variant === 'default' && 'bg-white border-gray-200',
-        variant === 'success' && 'bg-green-50 border-green-200',
-        variant === 'error' && 'bg-red-50 border-red-200',
+        variant === 'default' && 'bg-white border-gray-200 text-gray-900',
+        variant === 'success' && 'bg-green-50 border-green-200 text-green-800',
+        variant === 'error' && 'bg-red-50 border-red-200 text-red-800',
         variant === 'warning' && 'bg-yellow-50 border-yellow-200',
 
         className,

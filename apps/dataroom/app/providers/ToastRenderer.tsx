@@ -7,7 +7,7 @@ import {
 import { Toast } from '../components/Toast';
 import { useToast } from '@multi-tenancy/design-system';
 
-export function ToastRenderer({ children }: { children: React.ReactNode }) {
+export const ToastRenderer = ({ children }: { children: React.ReactNode }) => {
   const { toasts, dismiss } = useToast();
   const styles = useStyles();
 
@@ -27,10 +27,11 @@ export function ToastRenderer({ children }: { children: React.ReactNode }) {
           duration={t.duration}
           action={t.action}
           open
-          contentClassName="bg-white rounded-md text-sm"
           onOpenChange={(open) => !open && dismiss(t.id)}
         />
       ))}
     </ToastProviderPrimitive>
   );
-}
+};
+
+ToastRenderer.displayName = 'ToastRenderer';

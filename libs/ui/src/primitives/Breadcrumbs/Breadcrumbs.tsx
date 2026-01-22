@@ -39,3 +39,5 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
     );
   },
 );
+
+Breadcrumbs.displayName = 'Breadcrumbs';

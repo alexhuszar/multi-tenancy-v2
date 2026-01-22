@@ -31,7 +31,7 @@ export function Toast({
     <ToastPrimitive
       className={styles.getToastStyles({ variant, className })}
       contentClassName={styles.cn(
-        'flex flex-col rounded-md gap-2 justify-between w-full ps-3 [&>div]:flex  [&>*:first-child]:flex-1 [&>*:first-child]:justify-between [&>*:first-child]:align-middle',
+        'flex flex-col bg-white text-sm rounded-md gap-2 justify-between w-full ps-3 [&>div]:flex  [&>*:first-child]:flex-1 [&>*:first-child]:justify-between [&>*:first-child]:align-middle',
         contentClassName,
       )}
       {...props}
