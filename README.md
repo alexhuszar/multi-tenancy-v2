@@ -1,275 +1,189 @@
-# Multi tenancy - Version2
+# Multi-Tenancy Monorepo
 
-## Project Structure
+A Next.js/React monorepo with a multi-CSS framework design system.
+
+## Architecture
 
 ```
-multi-tenancy-v2/
 ├── apps/
-│   ├── dataroom/          # Main Next.js application
-│   └── dataroom-e2e/      # E2E tests (Playwright)
+│   ├── dataroom/          # Next.js app (Tailwind CSS)
+│   └── cryptocurrency/    # Next.js app (Tailwind CSS)
 ├── libs/
-│   ├── types/                      # Shared TypeScript types
-│   ├── utils/                      # Utility functions
-│   ├── ui/                         # Shared React components
-│   └── data-access/                # API clients and data hooks
-└── dist/                           # Build outputs
+│   ├── ui/                # @multi-tenancy/design-system
+│   └── utils/             # @multi-tenancy/utils
 ```
 
-## Shared Libraries
+## Design System
 
-This monorepo includes four buildable shared libraries:
+The design system (`@multi-tenancy/design-system`) supports multiple CSS frameworks through adapters.
 
-| Library | Package Name | Description |
-|---------|--------------|-------------|
-| **types** | `@multi-tenancy/types` | Shared TypeScript types (User, Tenant, ApiResponse) |
-| **utils** | `@multi-tenancy/utils` | Utility functions (formatters, validators) |
-| **ui** | `@multi-tenancy/design-system` | Shared React components (Button, etc.) |
-| **data-access** | `@multi-tenancy/data-access` | API client and data fetching hooks |
+### Key Features
 
-### Using Libraries in Your App
+- **Headless primitives** - Unstyled components that accept `className` props
+- **Multi-CSS framework support** - Tailwind and MaterializeCSS adapters included
+- **Design tokens** - Consistent colors, spacing, typography
+- **ThemeProvider** - React context for adapter and tokens
+- **Tree-shakeable** - Import only what you need
 
-```typescript
-// Import types
-import type { User, Tenant, ApiResponse } from '@multi-tenancy/types';
+### Quick Start
 
-// Import utilities
-import { formatDate, formatCurrency, isValidEmail } from '@multi-tenancy/utils';
+1. Wrap your app with `ThemeProvider`:
 
-// Import UI components
-import { Button } from '@multi-tenancy/design-system';
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from '@multi-tenancy/design-system';
+import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
 
-// Import data access hooks
-import { useFetch, ApiClient, initializeApiClient } from '@multi-tenancy/data-access';
-```
-
-### TypeScript Configuration
-
-The monorepo uses TypeScript path aliases to resolve library imports:
-
-- **Development**: Imports resolve to source files (`libs/*/src/index.ts`) via tsconfig paths
-- **Production build**: Imports resolve to built files (`dist/`) via package.json exports
-
-Each library's `package.json` includes a custom export condition (`@multi-tenancy/source`) that points to source files. This is configured in `tsconfig.base.json` via `customConditions`.
-
-**Important**: When creating new apps, you must include the library path aliases in the app's `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"],
-      "@multi-tenancy/types": ["../../libs/types/src/index.ts"],
-      "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
-      "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
-      "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
-    }
-  }
+export default function Layout({ children }) {
+  return (
+    <ThemeProvider adapter={tailwindAdapter}>
+      {children}
+    </ThemeProvider>
+  );
 }
 ```
 
-This is required because TypeScript `paths` don't merge when extending configs - they override completely.
-
-### Library Dependency Graph
-
-```
-types (no dependencies)
-  ├── utils (depends on types)
-  ├── ui (depends on types)
-  └── data-access (depends on types, utils)
-```
-
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx dev dataroom
-```
-
-To create a production bundle:
-
-```sh
-npx nx build dataroom
-```
-
-### Build Libraries
-
-Build all libraries:
-
-```sh
-npm run build:libs
-# or
-npx nx run-many --target=build --projects=tag:type:lib
-```
-
-Build a specific library:
-
-```sh
-npx nx build types
-npx nx build utils
-npx nx build ui
-npx nx build data-access
-```
-
-### Run Tests
-
-This project uses **Jest** with **React Testing Library** for unit testing.
-
-Run all tests:
-
-```sh
-npm run test
-```
-
-Run library tests only:
-
-```sh
-npm run test:libs
-```
-
-Run tests for a specific library:
-
-```sh
-npx nx test design-system
-npx nx test utils
-npx nx test types
-npx nx test data-access
-```
-
-#### Testing Stack
-
-| Package | Purpose |
-|---------|---------|
-| `jest` | Test runner |
-| `@swc/jest` | Fast TypeScript/JSX transformation |
-| `jest-environment-jsdom` | DOM environment for React components |
-| `@testing-library/react` | React component testing utilities |
-| `@testing-library/user-event` | User interaction simulation |
-| `@testing-library/jest-dom` | Custom Jest matchers for DOM assertions |
-
-#### Writing Tests
-
-Test files should be placed next to the source files with `.spec.ts` or `.spec.tsx` extension:
-
-```
-libs/ui/src/components/Button/
-├── Button.tsx
-├── Button.spec.tsx    # Test file
-└── index.ts
-```
-
-Example test:
+2. Create styled components using primitives + `useStyles()`:
 
 ```tsx
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Button } from './Button';
+// components/ui/Button.tsx
+import { Button as PrimitiveButton, useStyles } from '@multi-tenancy/design-system';
+import { forwardRef, ComponentProps } from 'react';
 
-describe('Button', () => {
-  it('should call onClick when clicked', async () => {
-    const handleClick = jest.fn();
-    render(<Button onClick={handleClick}>Click me</Button>);
+type ButtonProps = ComponentProps<typeof PrimitiveButton> & {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+};
 
-    await userEvent.click(screen.getByRole('button'));
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', size = 'md', className, ...props }, ref) => {
+    const styles = useStyles();
+    return (
+      <PrimitiveButton
+        ref={ref}
+        className={styles.getButtonStyles({ variant, size, className })}
+        {...props}
+      />
+    );
+  }
+);
+```
 
-    expect(handleClick).toHaveBeenCalledTimes(1);
-  });
+3. Use in your pages:
+
+```tsx
+import { Button } from '@/components/ui/Button';
+
+export default function Page() {
+  return <Button variant="primary" size="lg">Submit</Button>;
+}
+```
+
+### Available Imports
+
+```tsx
+// Main entry (all exports)
+import { Button, ThemeProvider, useStyles } from '@multi-tenancy/design-system';
+
+// Subpath imports (tree-shakeable)
+import { Button } from '@multi-tenancy/design-system/primitives';
+import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
+import { materializeAdapter } from '@multi-tenancy/design-system/adapters/materialize';
+import { ThemeProvider, useStyles, useTheme } from '@multi-tenancy/design-system/theme';
+import { createDesignTokens } from '@multi-tenancy/design-system/tokens';
+import { cn } from '@multi-tenancy/design-system/utils';
+```
+
+### Primitives
+
+| Component | Description |
+|-----------|-------------|
+| `Button` | Accessible button with loading state |
+| `Dialog` | Modal dialog (Radix UI) |
+| `Toast` | Toast notifications (Radix UI) |
+| `ToastProvider` | Toast context provider |
+| `Sheet` | Slide-out panel |
+| `Breadcrumbs` | Navigation breadcrumbs |
+| `NavigationBar` | Top navigation bar |
+
+### Patterns
+
+| Pattern | Description |
+|---------|-------------|
+| `InfiniteScroll` | Infinite scrolling with intersection observer |
+
+### Hooks
+
+| Hook | Description |
+|------|-------------|
+| `useStyles()` | Get the style adapter from context |
+| `useTheme()` | Get adapter + tokens from context |
+| `useInfiniteScroll()` | Infinite scroll behavior |
+
+### Adapters
+
+**Tailwind Adapter**
+```tsx
+import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
+```
+
+**MaterializeCSS Adapter**
+```tsx
+import { materializeAdapter } from '@multi-tenancy/design-system/adapters/materialize';
+```
+
+### Custom Tokens
+
+```tsx
+import { ThemeProvider, createDesignTokens } from '@multi-tenancy/design-system';
+import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
+
+const customTokens = createDesignTokens({
+  colors: {
+    blue: {
+      500: '#0066cc', // Custom brand color
+      600: '#0055aa',
+      // ...
+    },
+  },
 });
+
+<ThemeProvider adapter={tailwindAdapter} tokens={customTokens}>
+  {children}
+</ThemeProvider>
 ```
 
-### Lint and Type Check
-
-```sh
-npm run lint
-npm run typecheck
-```
-
-To see all available targets to run for a project, run:
-
-```sh
-npx nx show project dataroom
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/next:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/react:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add UI library
+## Development
 
 ```bash
-# Generate UI lib
-nx g @nx/next:library ui
+# Install dependencies
+npm install
 
-# Add a component
-nx g @nx/next:component ui/src/lib/button
+# Start dataroom app
+npm run dev
+
+# Build all
+npm run build:all
+
+# Test design system
+npx nx test design-system
+
+# Build design system
+npx nx build design-system
 ```
 
-## View project details
+## File Structure
 
-
-```bash
-nx show project @multi-tenancy/dataroom --web
 ```
-
-## Run affected commands
-```bash
-# see what's been affected by changes
-nx affected:graph
-
-# run tests for current changes
-nx affected:test
-
-# run e2e tests for current changes
-nx affected:e2e
+libs/ui/src/
+├── index.ts              # Main exports
+├── primitives/           # Headless components
+├── patterns/             # Behavioral patterns
+├── hooks/                # Business logic hooks
+├── adapters/             # CSS framework adapters
+│   ├── tailwind/
+│   └── materialize/
+├── theme/                # ThemeProvider + hooks
+├── tokens/               # Design tokens
+└── utils/                # Utilities (cn, polymorphic)
 ```
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
-```
-
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
