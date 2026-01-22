@@ -4,6 +4,7 @@ import type {
   ButtonStyleProps,
   DialogStyleProps,
   ToastStyleProps,
+  ToastViewportStyleProps,
   SheetStyleProps,
   InputStyleProps,
   BreadcrumbsStyleProps,
@@ -81,16 +82,31 @@ export function createTailwindAdapter(
       className,
     }: ToastStyleProps): string {
       return cn(
-        // Base
-        'flex items-center justify-between gap-4 p-4 rounded-md shadow-lg border',
+        'flex gap-4 p-2 rounded-md shadow-lg border flex-col text-gray-900',
 
-        // Variants
         variant === 'default' && 'bg-white border-gray-200 text-gray-900',
         variant === 'success' && 'bg-green-50 border-green-200 text-green-800',
         variant === 'error' && 'bg-red-50 border-red-200 text-red-800',
-        variant === 'warning' &&
-          'bg-yellow-50 border-yellow-200 text-yellow-800',
+        variant === 'warning' && 'bg-yellow-50 border-yellow-200',
 
+        className,
+      );
+    },
+
+    getToastViewportStyles({
+      position = 'bottom-right',
+      className,
+    }: ToastViewportStyleProps): string {
+      const positions = {
+        'top-left': 'top-0 left-0',
+        'top-right': 'top-0 right-0',
+        'bottom-left': 'bottom-0 left-0',
+        'bottom-right': 'bottom-0 right-0',
+      };
+
+      return cn(
+        'fixed z-50 flex flex-col gap-2 p-4 w-full max-w-sm',
+        positions[position],
         className,
       );
     },
@@ -184,13 +200,11 @@ export function createTailwindAdapter(
       };
     },
 
-    getNavigationBarStyles({
-      className,
-    }: NavigationBarStyleProps): string {
+    getNavigationBarStyles({ className }: NavigationBarStyleProps): string {
       return cn(
         'flex items-center justify-between w-full px-4 py-3',
         'bg-white border-b border-gray-200',
-        className
+        className,
       );
     },
   };

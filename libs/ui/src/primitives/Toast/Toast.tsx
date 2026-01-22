@@ -34,20 +34,22 @@ export const Toast = ({
       aria-live="polite"
     >
       <div className={contentClassName}>
-        {title && (
-          <Title role="heading" aria-level={2}>
-            {title}
-          </Title>
-        )}
+        <div>
+          {title && (
+            <Title role="heading" aria-level={2}>
+              {title}
+            </Title>
+          )}
 
-        {closeIcon && (
-          <Close aria-label="Close">
-            <span aria-hidden>{closeIcon}</span>
-          </Close>
-        )}
+          {closeIcon && (
+            <Close aria-label="Close">
+              <span aria-hidden>{closeIcon}</span>
+            </Close>
+          )}
+        </div>
+
+        {subtitle && <Description>{subtitle}</Description>}
       </div>
-
-      {subtitle && <Description>{subtitle}</Description>}
 
       {action && (
         <Action asChild aria-label={action.altText} altText={action.altText}>

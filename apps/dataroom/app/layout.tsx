@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './global.css';
-import { ThemeProvider } from '@multi-tenancy/design-system';
-import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
+import { RootProvider } from './providers';
 
 export const metadata: Metadata = {
   title: 'DataRoom',
@@ -16,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <ThemeProvider adapter={tailwindAdapter}>
-          {children}
-        </ThemeProvider>
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );
