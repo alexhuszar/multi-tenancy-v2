@@ -36,6 +36,14 @@ export const defaultCoreTokens: CoreTokens = {
   shadows,
 };
 
+/**
+ * Create semantic design tokens derived from the provided core tokens.
+ *
+ * Produces a structured set of semantic tokens covering colors (with UI state variants), spacing (component and layout scales), typography (body, headings, label, caption), and radii for components.
+ *
+ * @param core - Base core design tokens used to derive semantic values
+ * @returns A SemanticTokens object containing color, spacing, typography, and radii mappings derived from `core`
+ */
 export function createSemanticTokens(core: CoreTokens): SemanticTokens {
   return {
     colors: {
@@ -156,6 +164,13 @@ export function createSemanticTokens(core: CoreTokens): SemanticTokens {
   };
 }
 
+/**
+ * Generate component-level design tokens for UI elements from core and semantic tokens.
+ *
+ * @param core - Base design tokens (colors, spacing, typography, radii, shadows) used to derive component values
+ * @param semantic - Semantic tokens (component color, spacing, typography, radii) referenced by components
+ * @returns Component tokens for UI elements including `button`, `dialog`, `toast`, and `input`
+ */
 export function createComponentTokens(
   core: CoreTokens,
   semantic: SemanticTokens,
@@ -271,6 +286,15 @@ export function createComponentTokens(
   };
 }
 
+/**
+ * Builds a complete set of design tokens from defaults and optional overrides.
+ *
+ * When provided, `customCore` values override the corresponding default core tokens;
+ * color groups in `customCore.colors` are merged with the defaults rather than replaced.
+ *
+ * @param customCore - Partial core token values to override defaults
+ * @returns A DesignTokens object containing the merged `core`, derived `semantic` tokens, and `components` tokens
+ */
 export function createDesignTokens(
   customCore?: Partial<CoreTokens>,
 ): DesignTokens {

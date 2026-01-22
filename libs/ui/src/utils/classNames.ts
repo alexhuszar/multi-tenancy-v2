@@ -11,6 +11,14 @@ export type ClassValue =
   | ClassValue[]
   | Record<string, boolean | undefined | null>;
 
+/**
+ * Concatenates class name inputs into a single space-separated string.
+ *
+ * Accepts strings, numbers, arrays (recursively), and objects that map class names to truthy values; falsy inputs are ignored.
+ *
+ * @param inputs - Values to include as class names
+ * @returns A single string of class names separated by a single space
+ */
 export function cn(...inputs: ClassValue[]): string {
   const classes: string[] = [];
 

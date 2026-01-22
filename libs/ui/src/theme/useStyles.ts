@@ -3,16 +3,10 @@ import { ThemeContext } from './ThemeContext';
 import type { StyleAdapter } from '../adapters/types';
 
 /**
- * useStyles Hook
- * Returns the style adapter from theme context
+ * Retrieve the style adapter from the current theme context.
  *
- * @throws Error if used outside of ThemeProvider
- *
- * @example
- * ```tsx
- * const styles = useStyles();
- * const buttonClass = styles.getButtonStyles({ variant: 'primary', size: 'md' });
- * ```
+ * @throws Error if called outside a ThemeProvider.
+ * @returns The current theme's StyleAdapter.
  */
 export function useStyles(): StyleAdapter {
   const context = useContext(ThemeContext);

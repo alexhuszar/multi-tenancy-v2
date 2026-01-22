@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description: 'DataRoom - The only storage solution you need.',
 };
 
+/**
+ * Application root layout that provides theme context to its children.
+ *
+ * @param children - The React nodes to render as the application's content.
+ * @returns The root HTML structure with the ThemeProvider-wrapped children.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

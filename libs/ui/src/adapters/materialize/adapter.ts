@@ -11,6 +11,11 @@ import type {
 } from '../types';
 import { cn } from '../../utils/classNames';
 
+/**
+ * Create a Materialize style adapter.
+ *
+ * @returns A `StyleAdapter` that generates Materialize CSS class names for buttons, dialogs, toasts, sheets, inputs, breadcrumbs, and navigation bars.
+ */
 export function createMaterializeAdapter(
   _config?: StyleAdapterConfig,
 ): StyleAdapter {

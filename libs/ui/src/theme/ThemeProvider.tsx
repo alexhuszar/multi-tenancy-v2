@@ -11,22 +11,14 @@ export interface ThemeProviderProps {
 }
 
 /**
- * Theme Provider
- * Wraps the application to provide adapter and tokens via context
+ * Provides a ThemeContext to descendants containing a style adapter and design tokens.
  *
- * @example
- * ```tsx
- * import { ThemeProvider } from '@multi-tenancy/design-system';
- * import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
+ * The context value is stable and only updates when `adapter` or `tokens` change.
  *
- * export default function Layout({ children }) {
- *   return (
- *     <ThemeProvider adapter={tailwindAdapter}>
- *       {children}
- *     </ThemeProvider>
- *   );
- * }
- * ```
+ * @param adapter - The StyleAdapter used by descendant components to apply styles
+ * @param tokens - Design tokens to expose via context; defaults to `defaultDesignTokens`
+ * @param children - React nodes to render within the provider
+ * @returns The ThemeContext provider element that renders `children`
  */
 export function ThemeProvider({
   adapter,

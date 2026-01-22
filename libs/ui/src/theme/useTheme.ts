@@ -2,16 +2,10 @@ import { useContext } from 'react';
 import { ThemeContext, ThemeContextValue } from './ThemeContext';
 
 /**
- * useTheme Hook
- * Returns the full theme context (adapter + tokens)
+ * Accesses the current theme context (adapter and tokens).
  *
- * @throws Error if used outside of ThemeProvider
- *
- * @example
- * ```tsx
- * const { adapter, tokens } = useTheme();
- * const primaryColor = tokens.semantic.colors.primary.default;
- * ```
+ * @returns The ThemeContextValue containing the theme adapter and tokens.
+ * @throws Error if the hook is called outside of a ThemeProvider.
  */
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);

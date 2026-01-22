@@ -13,11 +13,23 @@ import { cn as baseCn } from '../../utils/classNames';
 import type { ClassValue } from '../../utils/classNames';
 import { twMerge } from 'tailwind-merge';
 
+/**
+ * Combine multiple class name values into a single Tailwind-ready class string, applying Tailwind-specific merging to remove duplicate or conflicting utility classes when available.
+ *
+ * @param inputs - Class name values (strings, arrays, objects, etc.) to be combined
+ * @returns A space-separated class string with duplicates/conflicts resolved when Tailwind merge is available
+ */
 function cn(...inputs: ClassValue[]): string {
   const merged = baseCn(...inputs);
   return twMerge ? twMerge(merged) : merged;
 }
 
+/**
+ * Create a StyleAdapter that generates Tailwind CSS utility class strings for common UI primitives.
+ *
+ * @param _config - Optional adapter configuration (currently not used)
+ * @returns A StyleAdapter that produces Tailwind-based class strings for buttons, dialogs, toasts, sheets, inputs, breadcrumbs, and navigation bars
+ */
 export function createTailwindAdapter(
   _config?: StyleAdapterConfig,
 ): StyleAdapter {

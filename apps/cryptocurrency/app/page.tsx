@@ -1,3 +1,12 @@
+/**
+ * Render the static homepage and sidebar layout for the @multi-tenancy/cryptocurrency app.
+ *
+ * Renders a static React component containing welcome, hero, learning materials,
+ * links (Nx Console, Nx Cloud, GitHub), a "Next steps" commands section, and a closing note.
+ * Styling for the layout is provided in ./index.tailwind.
+ *
+ * @returns The page's JSX element.
+ */
 export default function Index() {
   /*
    * Replace the elements below with your own.
