@@ -57,7 +57,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <PrimitiveButton
         ref={ref}
-        className={getButtonStyles({ variant, size, disabled, className })}
+        className={getButtonStyles({
+          variant,
+          size,
+          disabled,
+          className,
+          loading: props.isLoading,
+        })}
         disabled={disabled}
         {...props}
       />

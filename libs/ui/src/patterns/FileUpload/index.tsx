@@ -2,12 +2,29 @@ import { FileUploadDropzone } from './FileDropzone';
 import { DropzoneSurface, DropzoneSurfaceProps } from './FileDropzoneSurface';
 import { FileUploadRoot, FileUploadRootProps } from './FileUploadRoot';
 import { useFileUploadState } from '../../hooks/useFileUpload';
-import { FileUploadErrors } from './FileUploadErrors';
+import { FileDropError } from './FileDropError';
 
 export type FileUploadProps = FileUploadRootProps &
   Omit<DropzoneSurfaceProps, 'active'> & {
     errorClassName: string;
   };
+
+const DropZoneSurfaceWrap = ({
+  activeClassName,
+  className,
+  children,
+}: DropzoneSurfaceProps) => {
+  const { isDragActive } = useFileUploadState();
+  return (
+    <DropzoneSurface
+      active={isDragActive}
+      activeClassName={activeClassName}
+      className={className}
+    >
+      {children}
+    </DropzoneSurface>
+  );
+};
 
 export const FileUpload = ({
   onFilesAdded,
@@ -18,8 +35,6 @@ export const FileUpload = ({
   activeClassName,
   errorClassName,
 }: FileUploadProps) => {
-  const { isDragActive } = useFileUploadState();
-
   return (
     <FileUploadRoot
       onFilesAdded={onFilesAdded}
@@ -27,16 +42,15 @@ export const FileUpload = ({
       multiple={multiple}
     >
       <FileUploadDropzone>
-        <DropzoneSurface
-          active={isDragActive}
-          activeClassName={activeClassName}
+        <DropZoneSurfaceWrap
           className={className}
+          activeClassName={activeClassName}
         >
           {children}
-        </DropzoneSurface>
+        </DropZoneSurfaceWrap>
       </FileUploadDropzone>
 
-      <FileUploadErrors className={errorClassName} />
+      <FileDropError className={errorClassName} />
     </FileUploadRoot>
   );
 };

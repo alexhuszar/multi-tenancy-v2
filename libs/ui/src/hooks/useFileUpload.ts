@@ -9,7 +9,7 @@ export function useFileUploadState() {
   return { isDragActive };
 }
 
-export function useFileUploadErrors() {
+export function useFileDropError() {
   const { errors, setErrors, clearErrors } = useFileUploadContext();
 
   const addError = React.useCallback(
