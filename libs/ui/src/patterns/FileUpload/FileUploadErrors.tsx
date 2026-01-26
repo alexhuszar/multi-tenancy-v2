@@ -1,15 +1,15 @@
 import { useFileUploadError } from '../../hooks/useFileUpload';
 import { FileUploadError } from './FileUploadContext';
 
-type FileUploadErrorProps = {
+type FileUploadErrorsPropsProps = {
   children?: (errors: FileUploadError[]) => React.ReactNode;
   className: string;
 };
 
-export const FileUploadError = ({
+export const FileUploadErrors = ({
   children,
   className,
-}: FileUploadErrorProps) => {
+}: FileUploadErrorsPropsProps) => {
   const { errors } = useFileUploadError();
 
   if (errors.length === 0) return null;

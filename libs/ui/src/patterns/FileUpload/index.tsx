@@ -2,7 +2,7 @@ import { FileUploadDropzone } from './FileDropzone';
 import { DropzoneSurface, DropzoneSurfaceProps } from './FileDropzoneSurface';
 import { FileUploadRoot, FileUploadRootProps } from './FileUploadRoot';
 import { useFileUploadState } from '../../hooks/useFileUpload';
-import { FileUploadError } from './FileUploadError';
+import { FileUploadErrors } from './FileUploadErrors';
 
 type FileUploadInnerProps = Omit<DropzoneSurfaceProps, 'active'> & {
   errorClassName: string;
@@ -27,7 +27,7 @@ const FileUploadInner = ({
         {children}
       </DropzoneSurface>
 
-      <FileUploadError className={errorClassName} />
+      <FileUploadErrors className={errorClassName} />
     </FileUploadDropzone>
   );
 };
