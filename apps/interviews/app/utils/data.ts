@@ -1,9 +1,9 @@
-import { Test, Criteria } from '../types';
+import { Test } from '../types';
 
 export const tests: Test[] = [
   {
-    id: 1,
-    title: 'Test 1: Core Job Queue System',
+    id: '7371f4d2',
+    title: 'Core Job Queue System',
     subtitle: 'Implement the foundational job processing system',
     color: 'blue',
     time: '30 mins',
@@ -19,17 +19,31 @@ export const tests: Test[] = [
           'Track job status: pending, running, completed, failed',
           'Return job results or errors',
         ],
-        codeHint: `type Job = {
-  id: string;
-  run: () => Promise<void>;
-  createdAt: Date;
-};
+        codeHint: `class JobServices {
+  private queue: Job[] = [];
+  private runningJobs = new Set<string>();
+  private maxConcurrency: number;
 
-class JobServices {
-  async add(job: Job) {
-    // TODO: Implement
+  constructor(maxConcurrency = 3) {
+    this.maxConcurrency = maxConcurrency;
+    this.startProcessor();
   }
-}`,
+
+  async add(job: Job): Promise<void> {
+    // Implementation needed
+  }
+
+  private async startProcessor(): Promise<void> {
+    // Implementation needed
+  }
+
+  async getStatus(id: string): Promise<JobStatus> {
+    // Implementation needed
+
+    return 'completed';
+  }
+}
+        `,
       },
       {
         id: '1.2',
@@ -52,8 +66,8 @@ class JobServices {
     ],
   },
   {
-    id: 2,
-    title: 'Test 2: Backend API Development',
+    id: '7W71f4d2',
+    title: 'Backend API Development',
     subtitle: 'Build RESTful API with persistence and security',
     color: 'green',
     time: '45 mins',
@@ -98,7 +112,7 @@ class JobServices {
     ],
   },
   {
-    id: 3,
+    id: '7F71f4d2',
     title: 'Test 3: Frontend Dashboard',
     subtitle: 'Create React-based job management interface',
     color: 'purple',
@@ -141,8 +155,8 @@ class JobServices {
     ],
   },
   {
-    id: 4,
-    title: 'Test 4: Advanced System Features',
+    id: '7W71G4d2',
+    title: 'Advanced System Features',
     subtitle: 'Extend system with scheduling, plugins, and testing',
     color: 'yellow',
     time: '60 mins',
@@ -181,57 +195,6 @@ class JobServices {
         uiHint:
           'Unit tests with Jest, API tests with Supertest, E2E with Cypress/Playwright, Load testing with Artillery/k6',
       },
-    ],
-  },
-];
-
-export const evaluationCriteria: Criteria[] = [
-  {
-    title: 'Code Quality (25%)',
-    percentage: 25,
-    icon: 'FaStar',
-    color: 'blue',
-    items: [
-      'TypeScript usage & type safety',
-      'Error handling & edge cases',
-      'Clean, readable code',
-      'Proper abstraction',
-    ],
-  },
-  {
-    title: 'System Design (25%)',
-    percentage: 25,
-    icon: 'FaProjectDiagram',
-    color: 'green',
-    items: [
-      'Scalability considerations',
-      'Database design',
-      'API design principles',
-      'Architecture decisions',
-    ],
-  },
-  {
-    title: 'Problem Solving (25%)',
-    percentage: 25,
-    icon: 'FaLightbulb',
-    color: 'purple',
-    items: [
-      'Algorithm efficiency',
-      'Concurrency handling',
-      'Debugging approach',
-      'Solution creativity',
-    ],
-  },
-  {
-    title: 'Communication (25%)',
-    percentage: 25,
-    icon: 'FaComments',
-    color: 'yellow',
-    items: [
-      'Explaining decisions',
-      'Asking clarifying questions',
-      'Collaborative approach',
-      'Documentation clarity',
     ],
   },
 ];

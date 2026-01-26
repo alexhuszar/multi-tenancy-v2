@@ -1,23 +1,56 @@
-// const { createGlobPatternsForDependencies } = require('@nx/next/tailwind');
-
-// The above utility import will not work if you are using Next.js' --turbo.
-// Instead you will have to manually add the dependent paths to be included.
-// For example
-// ../libs/buttons/**/*.{ts,tsx,js,jsx,html}',                 <--- Adding a shared lib
-// !../libs/buttons/**/*.{stories,spec}.{ts,tsx,js,jsx,html}', <--- Skip adding spec/stories files from shared lib
-
-// If you are **not** using `--turbo` you can uncomment both lines 1 & 19.
-// A discussion of the issue can be found: https://github.com/nrwl/nx/issues/26510
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './{src,pages,components,app}/**/*.{ts,tsx,js,jsx,html}',
     '!./{src,pages,components,app}/**/*.{stories,spec}.{ts,tsx,js,jsx,html}',
-    //     ...createGlobPatternsForDependencies(__dirname)
   ],
   theme: {
     extend: {},
   },
   plugins: [],
+   safelist: [
+    'border-blue-500',
+    'bg-blue-50',
+    'hover:bg-blue-100',
+    'text-blue-700',
+    'bg-blue-100',
+    'text-blue-800',
+    'bg-blue-500',
+    'bg-blue-600',
+    'hover:bg-blue-700',
+    'text-blue-600',
+    
+    'border-green-500',
+    'bg-green-50',
+    'hover:bg-green-100',
+    'text-green-700',
+    'bg-green-100',
+    'text-green-800',
+    'bg-green-500',
+    'bg-green-600',
+    'hover:bg-green-700',
+    'text-green-600',
+    
+    'border-purple-500',
+    'bg-purple-50',
+    'hover:bg-purple-100',
+    'text-purple-700',
+    'bg-purple-100',
+    'text-purple-800',
+    'bg-purple-500',
+    'bg-purple-600',
+    'hover:bg-purple-700',
+    'text-purple-600',
+    
+    'border-yellow-500',
+    'bg-yellow-50',
+    'hover:bg-yellow-100',
+    'text-yellow-700',
+    'bg-yellow-100',
+    'text-yellow-800',
+    'bg-yellow-500',
+    'bg-yellow-600',
+    'hover:bg-yellow-700',
+    'text-yellow-600',
+  ],
 };

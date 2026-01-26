@@ -1,0 +1,1 @@
+{"version":3,"file":"ThemeContext.d.ts","sourceRoot":"","sources":["../../src/theme/ThemeContext.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAC;AACtD,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,iBAAiB,CAAC;AAEpD,MAAM,WAAW,iBAAiB;IAChC,OAAO,EAAE,YAAY,CAAC;IACtB,MAAM,EAAE,YAAY,CAAC;CACtB;AAED,eAAO,MAAM,YAAY,mDAAgD,CAAC"}

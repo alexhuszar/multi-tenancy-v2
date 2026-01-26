@@ -1,0 +1,2 @@
+export type { StyleAdapter, StyleAdapterConfig, ButtonStyleProps, DialogStyleProps, ToastStyleProps, SheetStyleProps, InputStyleProps, BreadcrumbsStyleProps, NavigationBarStyleProps, } from './types';
+//# sourceMappingURL=index.d.ts.map

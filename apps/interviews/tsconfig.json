@@ -17,11 +17,13 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
+      "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
+      "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
     },
     "types": ["jest", "node"],
-    "outDir": "dist",
-    "rootDir": "."
+    "outDir": "dist"
   },
   "include": [
     "app/**/*.ts",
@@ -46,5 +48,8 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {"path": "../../libs/ui"}
   ]
 }

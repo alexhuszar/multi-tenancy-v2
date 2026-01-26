@@ -1,0 +1,1 @@
+{"version":3,"file":"useInfiniteScroll.d.ts","sourceRoot":"","sources":["../../src/hooks/useInfiniteScroll.ts"],"names":[],"mappings":"AAIA,wBAAgB,iBAAiB,CAAC,EAChC,OAAO,EACP,UAAU,EACV,UAAoB,GACrB,EAAE;IACD,OAAO,EAAE,OAAO,CAAC;IACjB,UAAU,EAAE,MAAM,IAAI,CAAC;IACvB,UAAU,CAAC,EAAE,MAAM,CAAC;CACrB;;EAyBA"}

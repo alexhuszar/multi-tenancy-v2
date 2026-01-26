@@ -20,7 +20,7 @@ export interface TestRequirement {
 }
 
 export interface Test {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   color: 'blue' | 'green' | 'purple' | 'yellow';

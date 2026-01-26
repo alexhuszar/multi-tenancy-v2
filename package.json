@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx dev dataroom",
-    "build": "nx build dataroom",
     "build:libs": "nx run-many --target=build --projects=tag:type:lib",
     "build:all": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
