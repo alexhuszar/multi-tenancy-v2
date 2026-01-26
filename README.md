@@ -35,11 +35,7 @@ import { ThemeProvider } from '@multi-tenancy/design-system';
 import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
 
 export default function Layout({ children }) {
-  return (
-    <ThemeProvider adapter={tailwindAdapter}>
-      {children}
-    </ThemeProvider>
-  );
+  return <ThemeProvider adapter={tailwindAdapter}>{children}</ThemeProvider>;
 }
 ```
 
@@ -55,18 +51,10 @@ type ButtonProps = ComponentProps<typeof PrimitiveButton> & {
   size?: 'sm' | 'md' | 'lg';
 };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', className, ...props }, ref) => {
-    const styles = useStyles();
-    return (
-      <PrimitiveButton
-        ref={ref}
-        className={styles.getButtonStyles({ variant, size, className })}
-        {...props}
-      />
-    );
-  }
-);
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ variant = 'primary', size = 'md', className, ...props }, ref) => {
+  const styles = useStyles();
+  return <PrimitiveButton ref={ref} className={styles.getButtonStyles({ variant, size, className })} {...props} />;
+});
 ```
 
 3. Use in your pages:
@@ -75,7 +63,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 import { Button } from '@/components/ui/Button';
 
 export default function Page() {
-  return <Button variant="primary" size="lg">Submit</Button>;
+  return (
+    <Button variant="primary" size="lg">
+      Submit
+    </Button>
+  );
 }
 ```
 
@@ -96,38 +88,40 @@ import { cn } from '@multi-tenancy/design-system/utils';
 
 ### Primitives
 
-| Component | Description |
-|-----------|-------------|
-| `Button` | Accessible button with loading state |
-| `Dialog` | Modal dialog (Radix UI) |
-| `Toast` | Toast notifications (Radix UI) |
-| `ToastProvider` | Toast context provider |
-| `Sheet` | Slide-out panel |
-| `Breadcrumbs` | Navigation breadcrumbs |
-| `NavigationBar` | Top navigation bar |
+| Component       | Description                          |
+| --------------- | ------------------------------------ |
+| `Button`        | Accessible button with loading state |
+| `Dialog`        | Modal dialog (Radix UI)              |
+| `Toast`         | Toast notifications (Radix UI)       |
+| `ToastProvider` | Toast context provider               |
+| `Sheet`         | Slide-out panel                      |
+| `Breadcrumbs`   | Navigation breadcrumbs               |
+| `NavigationBar` | Top navigation bar                   |
 
 ### Patterns
 
-| Pattern | Description |
-|---------|-------------|
+| Pattern          | Description                                   |
+| ---------------- | --------------------------------------------- |
 | `InfiniteScroll` | Infinite scrolling with intersection observer |
 
 ### Hooks
 
-| Hook | Description |
-|------|-------------|
-| `useStyles()` | Get the style adapter from context |
-| `useTheme()` | Get adapter + tokens from context |
-| `useInfiniteScroll()` | Infinite scroll behavior |
+| Hook                  | Description                        |
+| --------------------- | ---------------------------------- |
+| `useStyles()`         | Get the style adapter from context |
+| `useTheme()`          | Get adapter + tokens from context  |
+| `useInfiniteScroll()` | Infinite scroll behavior           |
 
 ### Adapters
 
 **Tailwind Adapter**
+
 ```tsx
 import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind';
 ```
 
 **MaterializeCSS Adapter**
+
 ```tsx
 import { materializeAdapter } from '@multi-tenancy/design-system/adapters/materialize';
 ```
@@ -150,7 +144,7 @@ const customTokens = createDesignTokens({
 
 <ThemeProvider adapter={tailwindAdapter} tokens={customTokens}>
   {children}
-</ThemeProvider>
+</ThemeProvider>;
 ```
 
 ## Development
@@ -172,18 +166,59 @@ npx nx test design-system
 npx nx build design-system
 ```
 
+## Add new projects
+
+While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+
+Use the plugin's generator to create new projects.
+
+To generate a new application, use:
+
+```sh
+npx nx g @nx/next:app demo
+```
+
+## Add UI library
+
+```bash
+# Generate UI lib
+nx g @nx/next:library ui
+
+# Add a component
+nx g @nx/next:component ui/src/lib/button
+
+
+## ▶️ View project details
+nx show project @multi-tenancy-v2/dataroom --web
+
+
+## ▶️ Run affected commands
+# see what's been affected by changes
+nx affected:graph
+
+# run tests for current changes
+nx affected:test
+
+# run e2e tests for current changes
+nx affected:e2e
+
+
 ## File Structure
 
 ```
+
 libs/ui/src/
-├── index.ts              # Main exports
-├── primitives/           # Headless components
-├── patterns/             # Behavioral patterns
-├── hooks/                # Business logic hooks
-├── adapters/             # CSS framework adapters
-│   ├── tailwind/
-│   └── materialize/
-├── theme/                # ThemeProvider + hooks
-├── tokens/               # Design tokens
-└── utils/                # Utilities (cn, polymorphic)
+├── index.ts # Main exports
+├── primitives/ # Headless components
+├── patterns/ # Behavioral patterns
+├── hooks/ # Business logic hooks
+├── adapters/ # CSS framework adapters
+│ ├── tailwind/
+│ └── materialize/
+├── theme/ # ThemeProvider + hooks
+├── tokens/ # Design tokens
+└── utils/ # Utilities (cn, polymorphic)
+
+```
+
 ```
