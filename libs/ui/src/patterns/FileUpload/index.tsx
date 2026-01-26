@@ -2,27 +2,33 @@ import { FileUploadDropzone } from './FileDropzone';
 import { DropzoneSurface, DropzoneSurfaceProps } from './FileDropzoneSurface';
 import { FileUploadRoot, FileUploadRootProps } from './FileUploadRoot';
 import { useFileUploadState } from '../../hooks/useFileUpload';
-import { FileDropError } from './FileDropError';
+import { FileUploadError } from './FileUploadError';
 
-export type FileUploadProps = FileUploadRootProps &
-  Omit<DropzoneSurfaceProps, 'active'> & {
-    errorClassName: string;
-  };
+type FileUploadInnerProps = Omit<DropzoneSurfaceProps, 'active'> & {
+  errorClassName: string;
+};
 
-const DropZoneSurfaceWrap = ({
+export type FileUploadProps = FileUploadRootProps & FileUploadInnerProps;
+
+const FileUploadInner = ({
   activeClassName,
+  errorClassName,
   className,
   children,
-}: DropzoneSurfaceProps) => {
+}: FileUploadInnerProps) => {
   const { isDragActive } = useFileUploadState();
   return (
-    <DropzoneSurface
-      active={isDragActive}
-      activeClassName={activeClassName}
-      className={className}
-    >
-      {children}
-    </DropzoneSurface>
+    <FileUploadDropzone>
+      <DropzoneSurface
+        active={isDragActive}
+        activeClassName={activeClassName}
+        className={className}
+      >
+        {children}
+      </DropzoneSurface>
+
+      <FileUploadError className={errorClassName} />
+    </FileUploadDropzone>
   );
 };
 
@@ -41,16 +47,13 @@ export const FileUpload = ({
       disabled={disabled}
       multiple={multiple}
     >
-      <FileUploadDropzone>
-        <DropZoneSurfaceWrap
-          className={className}
-          activeClassName={activeClassName}
-        >
-          {children}
-        </DropZoneSurfaceWrap>
-      </FileUploadDropzone>
-
-      <FileDropError className={errorClassName} />
+      <FileUploadInner
+        className={className}
+        activeClassName={activeClassName}
+        errorClassName={errorClassName}
+      >
+        {children}
+      </FileUploadInner>
     </FileUploadRoot>
   );
 };
