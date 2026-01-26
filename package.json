@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx dev dataroom",
-    "build": "nx build dataroom",
     "build:libs": "nx run-many --target=build --projects=tag:type:lib",
     "build:all": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
@@ -19,7 +17,8 @@
     "@radix-ui/react-toast": "^1.2.15",
     "next": "~16.0.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
@@ -48,6 +47,7 @@
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "10.4.13",
     "babel-jest": "^30.0.2",
+    "bootstrap": "^5.3.8",
     "eslint": "^9.8.0",
     "eslint-config-next": "^16.0.1",
     "eslint-config-prettier": "^10.0.0",
@@ -63,6 +63,7 @@
     "postcss": "8.4.38",
     "prettier": "~3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "tailwind-merge": "^3.4.0",
     "tailwindcss": "3.4.3",
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
