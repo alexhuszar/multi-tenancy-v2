@@ -17,6 +17,12 @@
     },
     {
       "path": "./apps/cryptocurrency"
+    },
+    {
+      "path": "./apps/interviews-e2e"
+    },
+    {
+      "path": "./apps/interviews"
     }
   ],
   "compilerOptions": {

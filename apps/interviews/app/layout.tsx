@@ -1,17 +1,16 @@
-import type { Metadata } from 'next';
 import './global.css';
-import { RootProvider } from '../../interviews/app/providers';
+import { RootProvider } from './providers';
 
-export const metadata: Metadata = {
-  title: 'DataRoom',
-  description: 'DataRoom - The only storage solution you need.',
+export const metadata = {
+  title: 'Welcome to interviews',
+  description: 'Interviews examples',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className="antialiased">

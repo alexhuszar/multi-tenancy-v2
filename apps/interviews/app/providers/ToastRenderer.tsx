@@ -4,7 +4,7 @@ import {
   ToastProvider as ToastProviderPrimitive,
   useStyles,
 } from '@multi-tenancy/design-system';
-import { Toast } from '../components/Toast';
+import { Toast } from '@multi-tenancy/dataroom/app/components/Toast';
 import { useToast } from '@multi-tenancy/design-system';
 
 export const ToastRenderer = ({ children }: { children: React.ReactNode }) => {
