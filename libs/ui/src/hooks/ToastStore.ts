@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 
-
 export interface ToastItem {
   id: string;
   variant?: 'default' | 'success' | 'error' | 'warning';

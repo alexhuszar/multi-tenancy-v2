@@ -1,7 +1,6 @@
 {
   "tailwindCSS.experimental.configFile": {
     "apps/dataroom/tailwind.config.js": "apps/dataroom/**",
-    "apps/cryptocurrency/tailwind.config.js": "apps/cryptocurrency/**"
   },
   "tailwindCSS.includeLanguages": {
     "typescript": "javascript",

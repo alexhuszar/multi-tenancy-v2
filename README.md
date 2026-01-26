@@ -83,7 +83,7 @@ import { tailwindAdapter } from '@multi-tenancy/design-system/adapters/tailwind'
 import { materializeAdapter } from '@multi-tenancy/design-system/adapters/materialize';
 import { ThemeProvider, useStyles, useTheme } from '@multi-tenancy/design-system/theme';
 import { createDesignTokens } from '@multi-tenancy/design-system/tokens';
-import { cn } from '@multi-tenancy/design-system/utils';
+import { cn } from '@multi-tenancy/design-system';
 ```
 
 ### Primitives

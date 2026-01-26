@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx dev dataroom",
-    "build": "nx build dataroom",
     "build:libs": "nx run-many --target=build --projects=tag:type:lib",
     "build:all": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
@@ -19,7 +17,10 @@
     "@radix-ui/react-toast": "^1.2.15",
     "next": "~16.0.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8",
+    "tailwind-merge": "^3.4.0",
+    "bootstrap": "^5.3.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

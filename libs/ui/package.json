@@ -61,46 +61,6 @@
         "default": "./dist/tokens/index.js"
       }
     },
-    "./adapters": {
-      "@multi-tenancy/source": {
-        "types": "./src/adapters/index.ts",
-        "default": "./src/adapters/index.ts"
-      },
-      "import": {
-        "types": "./dist/adapters/index.d.ts",
-        "default": "./dist/adapters/index.js"
-      }
-    },
-    "./adapters/tailwind": {
-      "@multi-tenancy/source": {
-        "types": "./src/adapters/tailwind/index.ts",
-        "default": "./src/adapters/tailwind/index.ts"
-      },
-      "import": {
-        "types": "./dist/adapters/tailwind/index.d.ts",
-        "default": "./dist/adapters/tailwind/index.js"
-      }
-    },
-    "./adapters/materialize": {
-      "@multi-tenancy/source": {
-        "types": "./src/adapters/materialize/index.ts",
-        "default": "./src/adapters/materialize/index.ts"
-      },
-      "import": {
-        "types": "./dist/adapters/materialize/index.d.ts",
-        "default": "./dist/adapters/materialize/index.js"
-      }
-    },
-    "./theme": {
-      "@multi-tenancy/source": {
-        "types": "./src/theme/index.ts",
-        "default": "./src/theme/index.ts"
-      },
-      "import": {
-        "types": "./dist/theme/index.d.ts",
-        "default": "./dist/theme/index.js"
-      }
-    },
     "./utils": {
       "@multi-tenancy/source": {
         "types": "./src/utils/index.ts",
@@ -125,9 +85,6 @@
   },
   "dependencies": {
     "clsx": "^2.1.0"
-  },
-  "optionalDependencies": {
-    "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

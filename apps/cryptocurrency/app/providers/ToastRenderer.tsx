@@ -1,12 +1,8 @@
 'use client';
 
-import { twMerge } from 'tailwind-merge';
-import {
-  cn,
-  ToastProvider as ToastProviderPrimitive,
-  useToast,
-} from '@multi-tenancy/design-system';
+import { ToastProvider as ToastProviderPrimitive } from '@multi-tenancy/design-system';
 import { Toast } from '../components/Toast';
+import { useToast, cn } from '@multi-tenancy/design-system';
 
 function getToastViewportStyles({
   position = 'bottom-right',
@@ -16,17 +12,15 @@ function getToastViewportStyles({
   className?: string;
 }) {
   const positions = {
-    'top-left': 'top-0 left-0',
-    'top-right': 'top-0 right-0',
-    'bottom-left': 'bottom-0 left-0',
-    'bottom-right': 'bottom-0 right-0',
+    'top-left': 'top-0 start-0',
+    'top-right': 'top-0 end-0',
+    'bottom-left': 'bottom-0 start-0',
+    'bottom-right': 'bottom-0 end-0',
   };
-  return twMerge(
-    cn(
-      'fixed z-50 flex flex-col gap-2 p-4 w-full max-w-sm',
-      positions[position],
-      className,
-    ),
+  return cn(
+    'toast-container position-fixed p-3',
+    positions[position],
+    className,
   );
 }
 
@@ -53,5 +47,3 @@ export const ToastRenderer = ({ children }: { children: React.ReactNode }) => {
     </ToastProviderPrimitive>
   );
 };
-
-ToastRenderer.displayName = 'ToastRenderer';
