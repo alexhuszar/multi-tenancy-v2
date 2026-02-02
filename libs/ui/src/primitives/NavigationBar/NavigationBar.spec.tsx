@@ -29,11 +29,13 @@ describe('NavigationBar', () => {
     expect(leftButton).toBeInTheDocument();
     expect(rightButton).toBeInTheDocument();
 
-    const list = screen.getByRole('list');
+    screen.debug();
+
+    const list = screen.getByRole('navigation');
     expect(list).toHaveClass('custom_className');
 
     expect(title).toHaveClass('custom_className_input');
-    
+
     cleanup();
 
     render(<NavigationBar className="navigation-bar" />);

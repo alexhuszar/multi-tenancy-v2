@@ -2,11 +2,16 @@
 
 import { ReactNode } from 'react';
 import { ToastRenderer } from './ToastRenderer';
+import { ThemeProvider } from './ThemeProvider';
 
 interface RootProviderProps {
   children: ReactNode;
 }
 
 export const RootProvider = ({ children }: RootProviderProps) => {
-  return <ToastRenderer>{children}</ToastRenderer>;
+  return (
+    <ThemeProvider>
+      <ToastRenderer>{children}</ToastRenderer>
+    </ThemeProvider>
+  );
 };
