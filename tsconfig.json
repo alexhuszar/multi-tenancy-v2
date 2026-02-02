@@ -17,6 +17,9 @@
     },
     {
       "path": "./apps/cryptocurrency"
+    },
+    {
+      "path": "./libs/services/appwrite"
     }
   ],
   "compilerOptions": {
