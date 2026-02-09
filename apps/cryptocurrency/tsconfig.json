@@ -17,7 +17,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
+      "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
     },
     "types": ["jest", "node"],
     "outDir": "dist",
