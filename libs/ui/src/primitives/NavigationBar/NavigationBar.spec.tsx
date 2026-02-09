@@ -29,8 +29,6 @@ describe('NavigationBar', () => {
     expect(leftButton).toBeInTheDocument();
     expect(rightButton).toBeInTheDocument();
 
-    screen.debug();
-
     const list = screen.getByRole('navigation');
     expect(list).toHaveClass('custom_className');
 

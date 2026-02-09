@@ -3,13 +3,17 @@ import { ToastStore, ToastOptions } from './ToastStore';
 
 describe('ToastStore', () => {
   let store: ToastStore;
+  let uuidCounter = 0;
 
   beforeEach(() => {
     store = new ToastStore();
+    uuidCounter = 0;
 
     jest
       .spyOn(global.crypto, 'randomUUID')
-      .mockImplementation(() => 'mock-id-s1-s2-s3-s4');
+      .mockImplementation(
+        () => `mock-uuid-${uuidCounter}-${uuidCounter}-${++uuidCounter}`,
+      );
   });
 
   afterEach(() => {
@@ -34,10 +38,10 @@ describe('ToastStore', () => {
 
     const id = store.toast(options);
 
-    expect(id).toBe('mock-id-s1-s2-s3-s4');
+    expect(id).toBe('mock-uuid-0-0-1');
     expect(store.getSnapshot()).toEqual([
       {
-        id: 'mock-id-s1-s2-s3-s4',
+        id: 'mock-uuid-0-0-1',
         ...options,
       },
     ]);
@@ -56,9 +60,14 @@ describe('ToastStore', () => {
     store.toast({ title: 'Toast 1' });
     store.toast({ title: 'Toast 2' });
 
-    store.dismiss('mock-id-s1-s2-s3-s4');
+    store.dismiss('mock-uuid-0-0-1');
 
-    expect(store.getSnapshot()).toEqual([]);
+    expect(store.getSnapshot()).toEqual([
+      {
+        id: 'mock-uuid-1-1-2',
+        title: 'Toast 2',
+      },
+    ]);
   });
 
   test('dismiss does nothing for unknown id', () => {
@@ -83,7 +92,7 @@ describe('ToastStore', () => {
     store.subscribe(listener);
 
     store.toast({ title: 'Toast' });
-    store.dismiss('mock-id-s1-s2-s3-s4');
+    store.dismiss('mock-uuid-s1-s2-s3-s4');
     store.toast({ title: 'Toast again' });
     store.dismissAll();
 

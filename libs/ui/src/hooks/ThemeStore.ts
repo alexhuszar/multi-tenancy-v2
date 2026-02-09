@@ -13,7 +13,8 @@ export class ThemeStore {
   private resolvedTheme: ResolvedTheme = 'light';
   private listeners = new Set<() => void>();
   private mediaQuery: MediaQueryList | null = null;
-  private readonly serverSnapshot: ThemeSnapshot = {
+
+  private snapshot: ThemeSnapshot = {
     mode: 'system',
     resolvedTheme: 'light',
   };
@@ -34,6 +35,26 @@ export class ThemeStore {
     this.mediaQuery.addEventListener('change', this.handleSystemChange);
 
     this.resolvedTheme = this.resolveTheme();
+    this.updateSnapshot();
+  }
+
+  private resolveTheme(): ResolvedTheme {
+    if (this.mode === 'system') {
+      return this.mediaQuery?.matches ? 'dark' : 'light';
+    }
+    return this.mode;
+  }
+
+  private updateSnapshot() {
+    this.snapshot = {
+      mode: this.mode,
+      resolvedTheme: this.resolvedTheme,
+    };
+  }
+
+  private emitChange() {
+    this.updateSnapshot();
+    this.listeners.forEach((listener) => listener());
   }
 
   private handleSystemChange = () => {
@@ -43,28 +64,14 @@ export class ThemeStore {
     }
   };
 
-  private resolveTheme(): ResolvedTheme {
-    if (this.mode === 'system') {
-      return this.mediaQuery?.matches ? 'dark' : 'light';
-    }
-    return this.mode;
-  }
-
-  private emitChange() {
-    this.listeners.forEach((listener) => listener());
-  }
-
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   };
 
-  getSnapshot = (): ThemeSnapshot => ({
-    mode: this.mode,
-    resolvedTheme: this.resolvedTheme,
-  });
+  getSnapshot = () => this.snapshot;
 
-  getServerSnapshot = (): ThemeSnapshot => this.serverSnapshot;
+  getServerSnapshot = () => this.snapshot;
 
   setTheme = (mode: ThemeMode) => {
     this.mode = mode;
