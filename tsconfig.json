@@ -23,6 +23,7 @@
     }
   ],
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "strict": true
   }
 }

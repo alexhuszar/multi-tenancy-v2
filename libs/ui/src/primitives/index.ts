@@ -18,3 +18,6 @@ export type { NavigationBarProps } from './NavigationBar/NavigationBar';
 
 export { Sheet, SheetTrigger, SheetClose } from './Sheet';
 export type { SheetProps, SheetPosition } from './Sheet/Sheet';
+
+export { Input } from './Input/Input';
+export type { InputProps } from './Input/Input';
