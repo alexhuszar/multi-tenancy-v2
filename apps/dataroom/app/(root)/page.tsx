@@ -3,7 +3,7 @@
 import { Button } from '../components/Button';
 import { useToast } from '@multi-tenancy/design-system';
 
-export default function Index() {
+export default function Home() {
   const { toast } = useToast();
   const handleClick = () => {
     toast({
