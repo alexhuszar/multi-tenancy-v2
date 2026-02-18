@@ -1,27 +1,49 @@
 import { render, screen } from '@testing-library/react';
 import { useInfiniteScroll } from './useInfiniteScroll';
-import { intersect } from '../utils-test/intersection-observer';
-import React, { RefObject } from 'react';
+import React from 'react';
+
+let ioCallback!: IntersectionObserverCallback;
+
+beforeEach(() => {
+  global.IntersectionObserver = jest.fn((cb: IntersectionObserverCallback) => {
+    ioCallback = cb;
+    return {
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+      takeRecords: jest.fn(),
+    };
+  }) as unknown as typeof IntersectionObserver;
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 test('calls onLoadMore on intersect', () => {
   const onLoadMore = jest.fn();
 
-  let watchRef: React.RefObject<HTMLDivElement> | { current: null } = {
-    current: null,
-  };
-
   function TestComponent() {
-    watchRef = useInfiniteScroll({ hasMore: true, onLoadMore })
-      .watchRef as RefObject<HTMLDivElement>;
-    return <div ref={watchRef} data-testid="item-current" />;
+    const { watchRef } = useInfiniteScroll<HTMLDivElement>({
+      hasMore: true,
+      onLoadMore,
+    });
+    return <div ref={watchRef} data-testid="sentinel" />;
   }
 
   render(<TestComponent />);
 
-  const sentinel = screen.getByTestId('item-current');
-  expect(sentinel).toBeTruthy();
+  const sentinel = screen.getByTestId('sentinel');
 
-  intersect(sentinel, true);
+  ioCallback(
+    [
+      {
+        isIntersecting: true,
+        target: sentinel,
+      } as unknown as IntersectionObserverEntry,
+    ],
+    {} as unknown as IntersectionObserver,
+  );
 
   expect(onLoadMore).toHaveBeenCalledTimes(1);
 });
@@ -30,7 +52,7 @@ test('does not call onLoadMore when isLoading is true', () => {
   const onLoadMore = jest.fn();
 
   function TestComponent() {
-    const { watchRef } = useInfiniteScroll({
+    const { watchRef } = useInfiniteScroll<HTMLDivElement>({
       hasMore: true,
       isLoading: true,
       onLoadMore,
@@ -41,37 +63,41 @@ test('does not call onLoadMore when isLoading is true', () => {
   render(<TestComponent />);
 
   const sentinel = screen.getByTestId('sentinel');
-  intersect(sentinel, true);
+
+  ioCallback(
+    [
+      {
+        isIntersecting: true,
+        target: sentinel,
+      } as unknown as IntersectionObserverEntry,
+    ],
+    {} as unknown as IntersectionObserver,
+  );
 
   expect(onLoadMore).not.toHaveBeenCalled();
 });
 
 test('does not recreate observer when onLoadMore identity changes', () => {
-  const observerSpy = jest.spyOn(global, 'IntersectionObserver' as never);
-
-  let renderCount = 0;
+  const observerSpy = jest.spyOn(global, 'IntersectionObserver');
 
   function TestComponent({ count }: { count: number }) {
-    renderCount++;
-    const { watchRef } = useInfiniteScroll({
+    const { watchRef } = useInfiniteScroll<HTMLDivElement>({
       hasMore: true,
       onLoadMore: () => {
-        // new function identity each render due to closure over count
-        void count;
+        void count; // new identity every render
       },
     });
+
     return <div ref={watchRef} data-testid="sentinel" />;
   }
 
   const { rerender } = render(<TestComponent count={1} />);
-
-  const initialCallCount = observerSpy.mock.calls.length;
+  const initialCalls = observerSpy.mock.calls.length;
 
   rerender(<TestComponent count={2} />);
   rerender(<TestComponent count={3} />);
 
-  // Observer should not be recreated on re-renders
-  expect(observerSpy.mock.calls.length).toBe(initialCallCount);
+  expect(observerSpy.mock.calls.length).toBe(initialCalls);
 
   observerSpy.mockRestore();
 });
