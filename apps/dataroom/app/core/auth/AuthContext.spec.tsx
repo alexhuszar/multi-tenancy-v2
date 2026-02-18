@@ -114,9 +114,24 @@ describe('AuthProvider', () => {
       error: 'Invalid credentials',
     });
 
+    let capturedResult: Awaited<ReturnType<ReturnType<typeof useAuth>['signUp']>> | undefined;
+
+    function SignUpConsumer() {
+      const auth = useAuth();
+      return (
+        <button
+          onClick={async () => {
+            capturedResult = await auth.signUp('Test User', 'test@mail.com', 'password');
+          }}
+        >
+          sign-up
+        </button>
+      );
+    }
+
     render(
       <AuthProvider>
-        <TestConsumer />
+        <SignUpConsumer />
       </AuthProvider>,
     );
 
@@ -131,6 +146,8 @@ describe('AuthProvider', () => {
       mode: 'signup',
       redirect: false,
     });
+
+    expect(capturedResult).toEqual({ accountId: '', error: 'Invalid credentials' });
   });
 
   it('handles signIn exception gracefully', async () => {
