@@ -1,0 +1,19 @@
+import bcrypt from 'bcryptjs';
+
+const SALT_ROUNDS = 10;
+
+export async function hashPasswordBcrypt(password: string): Promise<string> {
+  if (bcrypt.truncates(password)) {
+    throw new Error(
+      'Password exceeds the maximum bcrypt input length of 72 bytes.',
+    );
+  }
+  return bcrypt.hash(password, SALT_ROUNDS);
+}
+
+export async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}

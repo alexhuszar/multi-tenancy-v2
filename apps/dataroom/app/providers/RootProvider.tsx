@@ -3,6 +3,8 @@
 import { ReactNode } from 'react';
 import { ToastRenderer } from './ToastRenderer';
 import { ThemeProvider } from './ThemeProvider';
+import { AuthProvider } from '../core/auth/AuthContext';
+import { SessionProvider } from 'next-auth/react';
 
 interface RootProviderProps {
   children: ReactNode;
@@ -11,7 +13,11 @@ interface RootProviderProps {
 export const RootProvider = ({ children }: RootProviderProps) => {
   return (
     <ThemeProvider>
-      <ToastRenderer>{children}</ToastRenderer>
+      <ToastRenderer>
+        <SessionProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </SessionProvider>
+      </ToastRenderer>
     </ThemeProvider>
   );
 };

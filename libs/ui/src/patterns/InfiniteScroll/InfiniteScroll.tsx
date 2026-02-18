@@ -8,6 +8,7 @@ export type Identifiable = { id: string };
 export interface InfiniteScrollProps<T extends Identifiable> {
   items: T[];
   hasMore: boolean;
+  isLoading?: boolean;
   onLoadMore: () => void;
   renderItem: (item: T) => ReactNode;
   loader?: ReactNode;
@@ -16,11 +17,12 @@ export interface InfiniteScrollProps<T extends Identifiable> {
 export function InfiniteScroll<T extends Identifiable>({
   items,
   hasMore,
+  isLoading,
   onLoadMore,
   renderItem,
   loader,
 }: InfiniteScrollProps<T>) {
-  const { watchRef } = useInfiniteScroll({ hasMore, onLoadMore });
+  const { watchRef } = useInfiniteScroll({ hasMore, isLoading, onLoadMore });
 
   return (
     <>
@@ -34,6 +36,7 @@ export function InfiniteScroll<T extends Identifiable>({
             ref={watchRef}
             aria-hidden="true"
             data-element="infinite-scroll-sentinel"
+            style={{ height: 1 }}
           />
           {loader}
         </>

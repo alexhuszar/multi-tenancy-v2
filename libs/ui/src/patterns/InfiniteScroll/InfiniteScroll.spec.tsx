@@ -73,4 +73,48 @@ describe('InfiniteScroll (pattern)', () => {
 
     expect(observerInstance.disconnect).toHaveBeenCalled();
   });
+
+  test('does not call onLoadMore when isLoading is true', async () => {
+    const onLoadMore = jest.fn();
+    const items = generateItems(3);
+
+    render(
+      <InfiniteScroll
+        items={items}
+        hasMore
+        isLoading
+        onLoadMore={onLoadMore}
+        renderItem={(item) => <div data-testid="item">{item.title}</div>}
+      />,
+    );
+
+    const sentinel = document.querySelector(
+      '[data-element="infinite-scroll-sentinel"]',
+    ) as HTMLElement;
+
+    await waitFor(() => {
+      intersect(sentinel, true);
+    });
+
+    expect(onLoadMore).not.toHaveBeenCalled();
+  });
+
+  test('sentinel has a non-zero height', () => {
+    const items = generateItems(1);
+
+    render(
+      <InfiniteScroll
+        items={items}
+        hasMore
+        onLoadMore={jest.fn()}
+        renderItem={(item) => <div>{item.title}</div>}
+      />,
+    );
+
+    const sentinel = document.querySelector(
+      '[data-element="infinite-scroll-sentinel"]',
+    ) as HTMLElement;
+
+    expect(sentinel.style.height).toBe('1px');
+  });
 });

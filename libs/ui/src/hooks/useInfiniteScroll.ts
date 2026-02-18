@@ -2,36 +2,50 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 
-export function useInfiniteScroll({
-  hasMore,
-  onLoadMore,
-  rootMargin = '200px',
-}: {
+type UseInfiniteScrollOptions = {
   hasMore: boolean;
+  isLoading?: boolean;
   onLoadMore: () => void;
   rootMargin?: string;
-}) {
-  const watchRef = useRef<HTMLDivElement | null>(null);
+};
+
+export function useInfiniteScroll<T extends Element = Element>({
+  hasMore,
+  isLoading = false,
+  onLoadMore,
+  rootMargin = '200px',
+}: UseInfiniteScrollOptions) {
+  const watchRef = useRef<T | null>(null);
+
+  const latest = useRef({ hasMore, isLoading, onLoadMore });
+  latest.current = { hasMore, isLoading, onLoadMore };
+
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const handleIntersect = useCallback(
     ([entry]: IntersectionObserverEntry[]) => {
-      if (entry.isIntersecting && hasMore) {
-        onLoadMore();
+      if (
+        entry.isIntersecting &&
+        latest.current.hasMore &&
+        !latest.current.isLoading
+      ) {
+        latest.current.onLoadMore();
       }
     },
-    [hasMore, onLoadMore],
+    [],
   );
 
   useEffect(() => {
     if (!watchRef.current) return;
+    if (typeof IntersectionObserver === 'undefined') return;
 
-    const observer = new IntersectionObserver(handleIntersect, {
+    observerRef.current = new IntersectionObserver(handleIntersect, {
       rootMargin,
     });
 
-    observer.observe(watchRef.current);
+    observerRef.current.observe(watchRef.current);
 
-    return () => observer.disconnect();
+    return () => observerRef.current?.disconnect();
   }, [handleIntersect, rootMargin]);
 
   return { watchRef };
