@@ -7,7 +7,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "bcryptjs": "^2.4.3"
+    "bcryptjs": "^3.0.3"
   },
   "exports": {
     ".": {

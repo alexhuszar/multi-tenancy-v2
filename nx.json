@@ -66,6 +66,9 @@
       "inputs": ["production", "^production"],
       "cache": true
     },
+    "dev": {
+      "dependsOn": ["^build"]
+    },
     "test": {
       "dependsOn": ["^build"]
     },

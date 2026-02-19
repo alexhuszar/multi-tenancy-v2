@@ -5,6 +5,7 @@ import { useToast } from '@multi-tenancy/design-system';
 
 export default function Home() {
   const { toast } = useToast();
+
   const handleClick = () => {
     toast({
       variant: 'success',
@@ -12,6 +13,7 @@ export default function Home() {
       subtitle: 'Your changes have been saved.',
     });
   };
+
   return (
     <Button variant="primary" size="lg" onClick={handleClick}>
       Hello world!

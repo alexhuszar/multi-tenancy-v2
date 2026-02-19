@@ -23,11 +23,13 @@
       "@/*": ["./*"],
       "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
       "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
+      "@multi-tenancy/design-system/tokens": ["../../libs/ui/src/tokens/index.ts"],
       "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
     },
     "outDir": "dist"
   },
   "include": [
+    "*.ts",
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.js",
@@ -35,7 +37,7 @@
     "../../apps/dataroom/.next/types/**/*.ts",
     "../../dist/apps/dataroom/.next/types/**/*.ts",
     "next-env.d.ts"
-  ],
+, "tailwind-helpers.cjs"  ],
   "exclude": [
     "out-tsc",
     "dist",

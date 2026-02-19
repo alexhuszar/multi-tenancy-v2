@@ -3,9 +3,29 @@ import type { Provider } from 'next-auth/providers/index';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  throw new Error(
+    'Google OAuth requires GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables',
+  );
+}
+
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is required');
+}
+
 const providers: Provider[] = [
+  GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    authorization: {
+      params: {
+        prompt: 'consent',
+        response_type: 'code',
+      },
+    },
+  }),
   CredentialsProvider({
-    name: 'Email and Password',
+    name: 'credentials',
     credentials: {
       email: { label: 'Email', type: 'email' },
       password: { label: 'Password', type: 'password' },
@@ -78,48 +98,28 @@ const providers: Provider[] = [
   }),
 ];
 
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-  providers.push(
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code',
-        },
-      },
-    }),
-  );
-}
-
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error('NEXTAUTH_SECRET environment variable is required');
-}
-
 export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        //const existingUser = await userStore.getUserByEmail(user.email!);
-        // if (!existingUser) {
-        //   const newUser = await userStore.createUser({
-        //     email: user.email!,
-        //     name: user.name || user.email!.split('@')[0],
-        //     provider: 'google',
-        //   });
-        //   user.id = newUser.id;
-      } else {
-        //   if (existingUser.provider === 'credentials') {
-        //     throw new Error(
-        //       'This email is already registered with password. Please sign in with your password.',
-        //     );
-        //   }
-        //   user.id = existingUser.id;
-        //}
-      }
+      //if (account?.provider === 'google') {
+      //const existingUser = await userStore.getUserByEmail(user.email!);
+      // if (!existingUser) {
+      //   const newUser = await userStore.createUser({
+      //     email: user.email!,
+      //     name: user.name || user.email!.split('@')[0],
+      //     provider: 'google',
+      //   });
+      //   user.id = newUser.id;
+      // } else {
+      //   if (existingUser.provider === 'credentials') {
+      //     throw new Error(
+      //       'This email is already registered with password. Please sign in with your password.',
+      //     );
+      //   }
+      //   user.id = existingUser.id;
+      //}
+      // }
       return true;
     },
 

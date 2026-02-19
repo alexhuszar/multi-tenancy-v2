@@ -22,7 +22,11 @@ export function InfiniteScroll<T extends Identifiable>({
   renderItem,
   loader,
 }: InfiniteScrollProps<T>) {
-  const { watchRef } = useInfiniteScroll({ hasMore, isLoading, onLoadMore });
+  const { watchRef } = useInfiniteScroll<HTMLDivElement>({
+    hasMore,
+    isLoading,
+    onLoadMore,
+  });
 
   return (
     <>

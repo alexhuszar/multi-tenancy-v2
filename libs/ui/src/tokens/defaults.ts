@@ -37,6 +37,8 @@ export const defaultCoreTokens: CoreTokens = {
 };
 
 export function createSemanticTokens(core: CoreTokens): SemanticTokens {
+  const primaryColor   = core.colors.primary   ?? core.colors.blue;
+  const secondaryColor = core.colors.secondary ?? core.colors.gray;
   return {
     colors: {
       background: {
@@ -52,18 +54,18 @@ export function createSemanticTokens(core: CoreTokens): SemanticTokens {
         inverse: '#ffffff',
       },
       primary: {
-        default: core.colors.blue[600],
-        hover: core.colors.blue[700],
-        active: core.colors.blue[800],
-        subtle: core.colors.blue[50],
+        default: primaryColor[600],
+        hover: primaryColor[700],
+        active: primaryColor[800],
+        subtle: primaryColor[50],
         foreground: '#ffffff',
       },
       secondary: {
-        default: core.colors.gray[200],
-        hover: core.colors.gray[300],
-        active: core.colors.gray[400],
-        subtle: core.colors.gray[50],
-        foreground: core.colors.gray[900],
+        default: secondaryColor[200],
+        hover: secondaryColor[300],
+        active: secondaryColor[400],
+        subtle: secondaryColor[50],
+        foreground: secondaryColor[900],
       },
       success: {
         default: core.colors.green[600],
@@ -89,7 +91,7 @@ export function createSemanticTokens(core: CoreTokens): SemanticTokens {
         strong: core.colors.gray[300],
       },
       focus: {
-        ring: core.colors.blue[500],
+        ring: primaryColor[500],
       },
     },
     spacing: {
@@ -272,7 +274,9 @@ export function createComponentTokens(
 }
 
 export function createDesignTokens(
-  customCore?: Partial<CoreTokens>,
+  customCore?: Partial<Omit<CoreTokens, 'colors'>> & {
+    colors?: Partial<CoreTokens['colors']>;
+  },
 ): DesignTokens {
   const core: CoreTokens = {
     ...defaultCoreTokens,
