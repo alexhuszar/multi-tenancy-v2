@@ -37,7 +37,7 @@ export const NavigationBar = ({ className, ...props }: NavigationBarProps) => {
       title={
         <Link href="/" className="flex items-center gap-2">
           <Image src={logoImage} alt="logo" width={52} height={52} />
-          <span className="h4 text-brand/80 hidden uppercase lg:block">
+          <span className="h4 text-primary hidden uppercase lg:block">
             Data Room
           </span>
         </Link>

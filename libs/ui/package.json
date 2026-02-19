@@ -79,13 +79,20 @@
     "!dist/**/*.test.*"
   ],
   "sideEffects": false,
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-toast": "^1.2.15",
+    "clsx": "^2.1.0",
+    "react-dropzone": "^14.3.8"
+  },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "react-hook-form": "^7.71.1"
-  },
-  "dependencies": {
-    "clsx": "^2.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

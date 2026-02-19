@@ -40,14 +40,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={className} data-input-wrapper>
-        <Label.Root htmlFor={inputId} data-label>
+        {label &&<Label.Root htmlFor={inputId} data-label>
           {label}
           {required && (
             <span aria-hidden="true" data-required-indicator>
               *
             </span>
           )}
-        </Label.Root>
+        </Label.Root>}
 
         <div data-input-container>
           <input

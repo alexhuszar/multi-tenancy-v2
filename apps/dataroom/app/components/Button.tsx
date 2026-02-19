@@ -32,7 +32,7 @@ function getButtonStyles({
       'focus:outline-none focus:ring-2 focus:ring-offset-2',
       'disabled:pointer-events-none disabled:opacity-50',
       variant === 'primary' &&
-        'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+        'bg-primary text-white hover:bg-primary/90 focus:ring-primary',
       variant === 'secondary' &&
         'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
       variant === 'outline' &&
