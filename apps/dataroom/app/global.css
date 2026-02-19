@@ -129,23 +129,49 @@ pre {
 
   .form-input-password label,
   .form-input label {
-    @apply ml-4 block text-sm font-medium leading-normal text-foreground
+    @apply ml-4 block text-sm font-medium leading-normal text-foreground;
   }
 
   .form-input-password [data-input-container="true"] {
-    @apply mt-1 relative;
+    @apply mt-1 grid items-center;
+  }
+
+  .form-input-password [data-input="true"] {
+    grid-area: 1 / 1;
+    @apply w-full pr-20;
   }
 
   .form-input-password [data-input-adornment="true"] {
-    @apply absolute right-1 top-1/2 -translate-y-1/2 flex items-center 
+    grid-area: 1 / 1;
+    @apply justify-self-end flex items-center pr-1;
   }
 
-  .form-input-password button {
-    @apply h-[36px] cursor-pointer rounded-md hover:bg-secondary-300 border border-transparent bg-secondary-200 px-4 py-2 text-xs leading-normal text-secondary-foreground;
+  .form-input-password [data-password-toggle="true"] {
+    @apply h-[36px] cursor-pointer rounded-md
+          hover:bg-secondary-300
+          border border-transparent
+          bg-secondary-200
+          px-4 py-2 text-xs leading-normal
+          text-secondary-foreground;
   }
+
 
   .form-message {
     @apply mt-1 text-sm text-red-500;
+  }
+
+  .search-input [data-input-container="true"] {
+    @apply mt-1 grid items-center;
+  }
+
+  .search-input [data-input="true"] {
+    grid-area: 1 / 1;
+    @apply w-full pr-16 rounded-md focus:outline-primary-500 border border-border bg-muted px-4 py-2 text-sm leading-normal text-foreground;
+  }
+
+  .search-input [data-input-adornment="true"] {
+    grid-area: 1 / 1;
+    @apply px-4 justify-self-end flex items-center text-secondary-500;
   }
 
 }

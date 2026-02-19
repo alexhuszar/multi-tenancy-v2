@@ -37,7 +37,7 @@
     "../../apps/dataroom/.next/types/**/*.ts",
     "../../dist/apps/dataroom/.next/types/**/*.ts",
     "next-env.d.ts"
-, "tailwind-helpers.cjs"  ],
+  ],
   "exclude": [
     "out-tsc",
     "dist",

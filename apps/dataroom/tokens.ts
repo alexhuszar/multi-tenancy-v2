@@ -124,10 +124,10 @@ export const tokens = createDesignTokens({
     full: '9999px',
   },
   shadows: {
-    sm: '0 1px 3px 0 rgb(22 163 74 / 0.08)',
-    md: '0 4px 12px -1px rgb(22 163 74 / 0.12)',
-    lg: '0 10px 20px -3px rgb(22 163 74 / 0.15)',
-    xl: '0 20px 30px -5px rgb(22 163 74 / 0.18)',
+    sm: '0 1px 3px 0 rgb(0 0 0 / 0.08)',
+    md: '0 4px 12px -1px rgb(0 0 0 / 0.12)',
+    lg: '0 10px 20px -3px rgb(0 0 0 / 0.15)',
+    xl: '0 20px 30px -5px rgb(0 0 0 / 0.18)'
   },
 });
 
