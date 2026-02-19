@@ -6,7 +6,7 @@ A production-grade multi-tenant SaaS monorepo built with **Nx**, **Next.js 16**,
 
 ## Architecture Overview
 
-```
+```text
 multi-tenancy-v2/
 ├── apps/
 │   ├── dataroom/            # Virtual DataRoom SaaS (Tailwind + NextAuth + Appwrite)
@@ -49,7 +49,7 @@ A secure virtual data room for file management and collaboration. Built with Tai
 
 **Routes:**
 
-```
+```text
 app/
 ├── layout.tsx              # Root layout — wraps app in RootProvider, sets metadata
 ├── (auth)/
@@ -69,7 +69,7 @@ app/
 
 **Provider Stack (`app/providers/RootProvider.tsx`):**
 
-```
+```text
 RootProvider (outermost → innermost)
   ├── ThemeProvider      # Applies light/dark class to <html> element
   ├── ToastRenderer      # Bottom-right toast container
@@ -522,7 +522,7 @@ Each dependency is declared only in the workspace that uses it — no phantom de
 
 ## Project Structure — Full
 
-```
+```text
 multi-tenancy-v2/
 ├── apps/
 │   ├── dataroom/
