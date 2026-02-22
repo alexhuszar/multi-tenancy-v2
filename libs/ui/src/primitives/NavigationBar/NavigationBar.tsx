@@ -4,6 +4,7 @@ import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 export type NavigationBarProps = {
   className?: string;
   titleClassName?: string;
+  navListMenuClassName?: string;
   title?: string | ReactNode;
   isTitleCentered?: boolean;
   NavigationLeftSlot?: ReactElement;
@@ -13,18 +14,15 @@ export type NavigationBarProps = {
 export const NavigationBar = ({
   className = '',
   titleClassName = '',
+  navListMenuClassName = '',
   title,
   isTitleCentered = true,
   NavigationLeftSlot,
   NavigationRightSlot,
 }: NavigationBarProps) => {
   return (
-    <NavigationMenu.Root
-      aria-label="Main navigation"
-      className={className}
-      asChild
-    >
-      <NavigationMenu.List>
+    <NavigationMenu.Root aria-label="Main navigation" className={className}>
+      <NavigationMenu.List className={navListMenuClassName}>
         <NavigationMenu.Item
           role="presentation"
           data-element="navigation-left-slot"
@@ -36,7 +34,7 @@ export const NavigationBar = ({
           <div
             className={titleClassName}
             role="heading"
-            data-visual={isTitleCentered ? 'centered' : 'default'}
+            data-visual={isTitleCentered ? 'centered' : ''}
             aria-level={1}
           >
             {title}

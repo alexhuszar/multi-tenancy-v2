@@ -16,6 +16,7 @@ export interface DialogProps {
   children: ReactNode;
   closeIcon?: ReactNode;
   overlayClassName?: string;
+  titleClassName?: string;
   contentClassName: string;
 }
 
@@ -27,6 +28,7 @@ export const Dialog = ({
   closeIcon,
   children,
   overlayClassName,
+  titleClassName,
   contentClassName,
 }: DialogProps) => (
   <Root open={open} onOpenChange={onOpenChange} key={id}>
@@ -34,7 +36,12 @@ export const Dialog = ({
       <Overlay className={overlayClassName} role="presentation" />
 
       <Content className={contentClassName} aria-describedby={undefined}>
-        <Title role="heading" aria-level={2}>
+        <Title
+          role="heading"
+          aria-level={2}
+          className={titleClassName}
+          data-element="dialog-title"
+        >
           {title}
         </Title>
 

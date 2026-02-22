@@ -11,21 +11,28 @@ import { LogoutButton } from '../core/auth/LogoutButton';
 
 type NavigationBarProps = PrimitiveNavigationBarProps;
 
-function getNavigationBarStyles({ className }: { className?: string }) {
-  return twMerge(
-    cn(
-      'flex items-center justify-between w-full px-4 py-3',
-      'bg-white border-b border-gray-200',
-      className,
-    ),
-  );
-}
+const getNavigationBarStyles = ({ className }: { className?: string }) => {
+  return twMerge(cn('w-full bg-white border-b border-gray-200', className));
+};
 
-export const NavigationBar = ({ className, ...props }: NavigationBarProps) => {
+const getNavListMenuStyles = ({ className }: { className?: string }) => {
+  return twMerge(
+    cn('grid w-full grid-cols-[auto_1fr_auto] items-center px-4 py-3'),
+    className,
+  );
+};
+
+export const NavigationBar = ({
+  className,
+  navListMenuClassName,
+  ...props
+}: NavigationBarProps) => {
   return (
     <PrimitiveNavigationBar
       className={getNavigationBarStyles({ className })}
-      titleClassName="w-full"
+      navListMenuClassName={getNavListMenuStyles({
+        className: navListMenuClassName,
+      })}
       title={
         <Link href="/" className="flex items-center gap-2">
           <Image src={logoImage} alt="logo" width={52} height={52} />

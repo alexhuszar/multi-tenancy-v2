@@ -159,18 +159,4 @@ pre {
   .form-message {
     @apply mt-1 text-sm text-red-500;
   }
-
-  .search-input [data-input-container="true"] {
-    @apply mt-1 grid items-center;
-  }
-
-  .search-input [data-input="true"] {
-    grid-area: 1 / 1;
-    @apply  w-full rounded-md focus:outline-primary-500 border border-border bg-muted pl-4 pr-16 py-2 text-sm leading-normal text-foreground;;
-  }
-
-  .search-input [data-input-adornment="true"] {
-    grid-area: 1 / 1;
-    @apply px-4 justify-self-end flex items-center text-secondary-500;
-  }
 }

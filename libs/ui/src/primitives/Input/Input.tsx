@@ -12,6 +12,9 @@ export interface InputProps
   required?: boolean;
   endAdornment?: React.ReactNode;
   labelClassName?: string;
+  endAdornmentClassName?: string;
+  containerClassName?: string;
+  inputFieldClassName?: string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -28,6 +31,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       readOnly,
       className,
       labelClassName,
+      endAdornmentClassName,
+      containerClassName,
+      inputFieldClassName,
       type = 'text',
       ...props
     },
@@ -50,7 +56,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </span>
           )}
         </Label.Root>
-        <div data-input-container>
+        <div data-input-container className={containerClassName}>
           <input
             ref={ref}
             id={inputId}
@@ -63,10 +69,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             aria-errormessage={hasError ? descriptionId : undefined}
             aria-busy={loading || undefined}
             data-input
+            className={inputFieldClassName}
             {...props}
           />
 
-          {endAdornment && <div data-input-adornment>{endAdornment}</div>}
+          {endAdornment && (
+            <div data-input-adornment className={endAdornmentClassName}>
+              {endAdornment}
+            </div>
+          )}
         </div>
         {(error || helperText) && (
           <div

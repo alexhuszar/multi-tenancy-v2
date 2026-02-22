@@ -548,7 +548,7 @@ multi-tenancy-v2/
 │   │   │       └── ToastRenderer.tsx
 │   │   ├── proxy.ts
 │   │   ├── package.json
-│   │   ├── tailwind.config.js
+│   │   ├── tailwind.config.ts
 │   │   └── tsconfig.json
 │   ├── dataroom-e2e/
 │   ├── cryptocurrency/
