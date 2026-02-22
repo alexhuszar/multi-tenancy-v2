@@ -166,7 +166,7 @@ pre {
 
   .search-input [data-input="true"] {
     grid-area: 1 / 1;
-    @apply w-full pr-16 rounded-md focus:outline-primary-500 border border-border bg-muted px-4 py-2 text-sm leading-normal text-foreground;
+    @apply  w-full rounded-md focus:outline-primary-500 border border-border bg-muted pl-4 pr-16 py-2 text-sm leading-normal text-foreground;;
   }
 
   .search-input [data-input-adornment="true"] {

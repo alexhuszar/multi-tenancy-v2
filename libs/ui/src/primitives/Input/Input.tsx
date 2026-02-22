@@ -11,6 +11,7 @@ export interface InputProps
   loading?: boolean;
   required?: boolean;
   endAdornment?: React.ReactNode;
+  labelClassName?: string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -26,6 +27,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       disabled,
       readOnly,
       className,
+      labelClassName,
       type = 'text',
       ...props
     },
@@ -40,15 +42,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={className} data-input-wrapper>
-        {label &&<Label.Root htmlFor={inputId} data-label>
+        <Label.Root htmlFor={inputId} data-label className={labelClassName}>
           {label}
           {required && (
             <span aria-hidden="true" data-required-indicator>
               *
             </span>
           )}
-        </Label.Root>}
-
+        </Label.Root>
         <div data-input-container>
           <input
             ref={ref}
@@ -67,7 +68,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {endAdornment && <div data-input-adornment>{endAdornment}</div>}
         </div>
-
         {(error || helperText) && (
           <div
             id={descriptionId}
