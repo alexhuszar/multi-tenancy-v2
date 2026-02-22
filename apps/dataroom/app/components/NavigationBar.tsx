@@ -1,5 +1,3 @@
-'use client';
-
 import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,8 +7,7 @@ import {
   cn,
 } from '@multi-tenancy/design-system';
 import logoImage from '../../public/assets/images/logo.png';
-import { useAuth } from '../core/auth/AuthContext';
-import { Button } from './Button';
+import { LogoutButton } from '../core/auth/LogoutButton';
 
 type NavigationBarProps = PrimitiveNavigationBarProps;
 
@@ -25,28 +22,20 @@ function getNavigationBarStyles({ className }: { className?: string }) {
 }
 
 export const NavigationBar = ({ className, ...props }: NavigationBarProps) => {
-  const { signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
   return (
     <PrimitiveNavigationBar
       className={getNavigationBarStyles({ className })}
+      titleClassName="w-full"
       title={
         <Link href="/" className="flex items-center gap-2">
           <Image src={logoImage} alt="logo" width={52} height={52} />
-          <span className="h4 text-primary hidden uppercase lg:block">
+          <span className="h4 hidden uppercase text-primary lg:block">
             Data Room
           </span>
         </Link>
       }
-      NavigationRightSlot={
-        <Button onClick={handleSignOut} variant="outline" size="sm">
-          Log Out
-        </Button>
-      }
+      isTitleCentered={false}
+      NavigationRightSlot={<LogoutButton />}
       {...props}
     />
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { ActionButtons } from "../../components/ActionButtons";
 import { FileDropzone } from "../../components/FileDropzone";
@@ -17,27 +18,29 @@ export const Dashboard = () => {
   const sort = searchParams?.get("sort") || "createdAt-desc";
 
   return (
-    <section className="flex flex-col overflow-auto gap-4 h-full p-4 xl:p-8 relative">
-      <div className="mt-1 flex justify-center">
-        <Search />
-      </div>
+    <Suspense fallback={<Loading />}>
+      <section className="flex flex-col overflow-auto gap-4 h-full p-4 xl:p-8 relative">
+        <div className="mt-1 flex justify-center">
+          <Search />
+        </div>
 
-      <div className="h-full gap-4 overflow-auto p-4 xl:p-8">
-        {isLoading /*&& isDataLoading*/ && <Loading />}
+        <div className="h-full gap-4 overflow-auto p-4 xl:p-8">
+          {isLoading /*&& isDataLoading*/ && <Loading />}
 
-        {isAuthenticated && user && (
-          <div className="flex  flex-col gap-4">
-            <ActionButtons
-              accountId={user?.accountId}
-              className="sm:hidden "
-            />
-            <FileDropzone accountId={user?.accountId} />
-          </div>
-        )}
+          {isAuthenticated && user && (
+            <div className="flex  flex-col gap-4">
+              <ActionButtons
+                accountId={user?.accountId}
+                className="sm:hidden "
+              />
+              <FileDropzone accountId={user?.accountId} />
+            </div>
+          )}
 
-        {/* <DataTable folders={folders} files={files} currentSort={sort} /> */}
-      </div>
-    </section>
+          {/* <DataTable folders={folders} files={files} currentSort={sort} /> */}
+        </div>
+      </section>
+    </Suspense>
   );
 };
 

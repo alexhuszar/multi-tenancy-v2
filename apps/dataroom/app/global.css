@@ -64,7 +64,6 @@ pre {
 }
 svg {
   display: block;
-  vertical-align: middle;
   shape-rendering: auto;
   text-rendering: optimizeLegibility;
 }
@@ -112,9 +111,11 @@ pre {
 }
 
 @layer utilities {
+
   .form-container {
     @apply flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8;
   }
+  
   .form-title {
     @apply text-center text-2xl font-medium leading-normal text-primary md:text-left;
   }
@@ -155,7 +156,6 @@ pre {
           text-secondary-foreground;
   }
 
-
   .form-message {
     @apply mt-1 text-sm text-red-500;
   }
@@ -173,5 +173,4 @@ pre {
     grid-area: 1 / 1;
     @apply px-4 justify-self-end flex items-center text-secondary-500;
   }
-
 }

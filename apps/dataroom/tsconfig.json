@@ -23,7 +23,6 @@
       "@/*": ["./*"],
       "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
       "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
-      "@multi-tenancy/design-system/tokens": ["../../libs/ui/src/tokens/index.ts"],
       "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
     },
     "outDir": "dist"

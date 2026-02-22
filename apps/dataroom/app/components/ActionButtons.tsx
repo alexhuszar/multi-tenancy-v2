@@ -1,9 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { FolderPlus, Upload } from "lucide-react";
-import { useParams, usePathname } from "next/navigation";
-import { Button } from "./Button";
+import { useState, useRef } from 'react';
+import { FolderPlus, Upload } from 'lucide-react';
+import { useParams, usePathname } from 'next/navigation';
+import { Button } from './Button';
+import { twMerge } from 'tailwind-merge';
+import { cn } from '@multi-tenancy/design-system';
 // import { CreateFolderDialog } from "@/components/CreateFolderDialog";
 // import { FileUploader, FileUploaderHandle } from "@/components/FileUploader";
 // import { navItems } from "@/lib/utils/constants";
@@ -13,10 +15,10 @@ interface Props {
   className?: string;
 }
 
-export const ActionButtons = ({
-  accountId,
-  className = "flex",
-}: Props) => {
+const getButtonStyles = () =>
+  cn('bg-brand/10 text-brand flex items-center gap-3');
+
+export const ActionButtons = ({ accountId, className }: Props) => {
   const params = useParams();
   // const path = usePathname();
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
@@ -37,7 +39,8 @@ export const ActionButtons = ({
       <div className={`flex ${className} items-center justify-end gap-3`}>
         <Button
           onClick={handleUploadClick}
-          className="flex items-center gap-3 bg-brand/10 text-brand"
+          className={getButtonStyles()}
+          variant="outline"
         >
           <Upload size={18} />
           <span>Upload File</span>
@@ -45,7 +48,8 @@ export const ActionButtons = ({
 
         <Button
           onClick={() => setIsFolderDialogOpen(true)}
-          className="flex items-center gap-3 bg-brand/10 text-brand"
+          className={getButtonStyles()}
+          variant="outline"
         >
           <FolderPlus size={18} />
           <span>Create Folder</span>

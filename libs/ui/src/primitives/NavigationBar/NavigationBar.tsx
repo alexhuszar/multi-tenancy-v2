@@ -19,9 +19,16 @@ export const NavigationBar = ({
   NavigationRightSlot,
 }: NavigationBarProps) => {
   return (
-    <NavigationMenu.Root aria-label="Main navigation" className={className}>
+    <NavigationMenu.Root
+      aria-label="Main navigation"
+      className={className}
+      asChild
+    >
       <NavigationMenu.List>
-        <NavigationMenu.Item role="presentation">
+        <NavigationMenu.Item
+          role="presentation"
+          data-element="navigation-left-slot"
+        >
           {NavigationLeftSlot}
         </NavigationMenu.Item>
 
@@ -29,7 +36,7 @@ export const NavigationBar = ({
           <div
             className={titleClassName}
             role="heading"
-            data-visual={isTitleCentered ? 'centered' : ''}
+            data-visual={isTitleCentered ? 'centered' : 'default'}
             aria-level={1}
           >
             {title}

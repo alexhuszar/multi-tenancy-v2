@@ -5,7 +5,7 @@ import logoImage from '../../public/assets/images/logo.png';
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex min-h-screen">
-      <section className="bg-primary-600 hidden w-1/3 items-center justify-center p-10 lg:flex xl:w-1/3">
+      <section className="hidden w-1/3 items-center justify-center bg-primary-600 p-10 lg:flex xl:w-1/3">
         <div className="flex max-h-[800px] max-w-[430px] flex-col justify-center space-y-12">
           <Image
             src={logoImage}
@@ -30,7 +30,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             alt="logo"
             width={512}
             height={512}
-            className="h-auto w-[100px] lg:w-[250px]"
+            className="h-auto w-[100px]"
           />
         </div>
 

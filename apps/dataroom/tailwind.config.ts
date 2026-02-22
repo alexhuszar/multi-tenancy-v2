@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
 const plugin = require('tailwindcss/plugin');
-const { tokens, cssVars, darkCssVars } = require('./tokens');
+const { tokens, cssVars, darkCssVars } = require('./tailwind-tokens');
 
 const { core } = tokens;
 

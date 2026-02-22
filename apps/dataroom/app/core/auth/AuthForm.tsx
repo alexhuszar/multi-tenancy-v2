@@ -149,7 +149,7 @@ export const AuthForm = ({ type }: { type: FormType }) => {
         >
           {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
         </Button>
-        {error && <p className="form-message">*{error}</p>}
+        {error && <p className="form-message" role="alert" aria-live="assertive">*{error}</p>}
         <Button
           type="button"
           variant="outline"

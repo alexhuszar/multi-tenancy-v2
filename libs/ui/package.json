@@ -29,7 +29,8 @@
       "import": {
         "types": "./dist/primitives/index.d.ts",
         "default": "./dist/primitives/index.js"
-      }
+      },
+      "default": "./src/primitives/index.ts"
     },
     "./patterns": {
       "@multi-tenancy/source": {
@@ -39,7 +40,8 @@
       "import": {
         "types": "./dist/patterns/index.d.ts",
         "default": "./dist/patterns/index.js"
-      }
+      },
+      "default": "./src/patterns/index.ts"
     },
     "./hooks": {
       "@multi-tenancy/source": {
@@ -49,7 +51,8 @@
       "import": {
         "types": "./dist/hooks/index.d.ts",
         "default": "./dist/hooks/index.js"
-      }
+      },
+      "default": "./src/hooks/index.ts"
     },
     "./tokens": {
       "@multi-tenancy/source": {
@@ -59,7 +62,8 @@
       "import": {
         "types": "./dist/tokens/index.d.ts",
         "default": "./dist/tokens/index.js"
-      }
+      },
+      "default": "./src/tokens/index.ts"
     },
     "./utils": {
       "@multi-tenancy/source": {
@@ -69,7 +73,8 @@
       "import": {
         "types": "./dist/utils/index.d.ts",
         "default": "./dist/utils/index.js"
-      }
+      },
+      "default": "./src/utils/index.ts"
     },
     "./package.json": "./package.json"
   },
