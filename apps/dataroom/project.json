@@ -1,0 +1,13 @@
+{
+  "name": "@multi-tenancy/dataroom",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "dev": {
+      "options": {
+        "env": {
+          "NODE_OPTIONS": "--conditions=@multi-tenancy/source"
+        }
+      }
+    }
+  }
+}

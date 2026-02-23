@@ -29,7 +29,8 @@
       "import": {
         "types": "./dist/primitives/index.d.ts",
         "default": "./dist/primitives/index.js"
-      }
+      },
+      "default": "./src/primitives/index.ts"
     },
     "./patterns": {
       "@multi-tenancy/source": {
@@ -39,7 +40,8 @@
       "import": {
         "types": "./dist/patterns/index.d.ts",
         "default": "./dist/patterns/index.js"
-      }
+      },
+      "default": "./src/patterns/index.ts"
     },
     "./hooks": {
       "@multi-tenancy/source": {
@@ -49,7 +51,8 @@
       "import": {
         "types": "./dist/hooks/index.d.ts",
         "default": "./dist/hooks/index.js"
-      }
+      },
+      "default": "./src/hooks/index.ts"
     },
     "./tokens": {
       "@multi-tenancy/source": {
@@ -59,7 +62,8 @@
       "import": {
         "types": "./dist/tokens/index.d.ts",
         "default": "./dist/tokens/index.js"
-      }
+      },
+      "default": "./src/tokens/index.ts"
     },
     "./utils": {
       "@multi-tenancy/source": {
@@ -69,7 +73,8 @@
       "import": {
         "types": "./dist/utils/index.d.ts",
         "default": "./dist/utils/index.js"
-      }
+      },
+      "default": "./src/utils/index.ts"
     },
     "./package.json": "./package.json"
   },
@@ -79,13 +84,20 @@
     "!dist/**/*.test.*"
   ],
   "sideEffects": false,
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-toast": "^1.2.15",
+    "clsx": "^2.1.0",
+    "react-dropzone": "^14.3.8"
+  },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "react-hook-form": "^7.71.1"
-  },
-  "dependencies": {
-    "clsx": "^2.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

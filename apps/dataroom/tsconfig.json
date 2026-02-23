@@ -28,6 +28,7 @@
     "outDir": "dist"
   },
   "include": [
+    "*.ts",
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.js",

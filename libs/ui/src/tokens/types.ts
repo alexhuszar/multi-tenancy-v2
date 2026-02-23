@@ -33,6 +33,8 @@ export interface CoreTokens {
     green: ColorScale;
     red: ColorScale;
     yellow: ColorScale;
+    primary?: ColorScale;   // overrides the primary brand color (default: blue)
+    secondary?: ColorScale; // overrides the secondary color scale (default: gray)
   };
   spacing: Record<SpacingKey, string>;
   fontSizes: Record<FontSizeKey, string>;

@@ -1,60 +1,60 @@
-import { useState } from 'react';
-import { FormField } from './FormField';
-import { FormItem } from './FormItem';
-import { FormControl } from './FormControl';
-import { FormMessage, Input } from '../..';
+'use client';
 
-export const PasswordField = ({
-  control,
-  name,
-  showToggle = true,
-  showText = 'Show',
-  hideText = 'Hide',
-  label = 'Password',
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any;
+import { forwardRef, useState } from 'react';
+import { Input } from '../..';
+
+type InputProps = React.ComponentPropsWithoutRef<typeof Input>;
+
+type PasswordFieldProps = Omit<
+  InputProps,
+  'type' | 'endAdornment' | 'label'
+> & {
   name: 'password' | 'confirmPassword';
-  label: string;
+  label?: string;
   showToggle?: boolean;
   showText?: string;
   hideText?: string;
-}) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const toggleVisibility = () => {
-    setIsVisible((prev) => !prev);
-  };
-
-  return (
-    <FormField
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormControl>
-            <Input
-              {...field}
-              type={isVisible ? 'text' : 'password'}
-              data-password
-              endAdornment={
-                showToggle ? (
-                  <button
-                    type="button"
-                    onClick={toggleVisibility}
-                    aria-pressed={isVisible}
-                    data-password-toggle
-                  >
-                    {isVisible ? hideText : showText}
-                  </button>
-                ) : undefined
-              }
-              label={label}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
 };
+
+export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
+  (
+    {
+      name,
+      showToggle = true,
+      showText = 'Show',
+      hideText = 'Hide',
+      label = 'Password',
+      ...otherProps
+    },
+    ref,
+  ) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    const toggleVisibility = () => {
+      setIsVisible((prev) => !prev);
+    };
+
+    return (
+      <Input
+        {...otherProps}
+        ref={ref}
+        type={isVisible ? 'text' : 'password'}
+        data-password
+        endAdornment={
+          showToggle ? (
+            <button
+              type="button"
+              onClick={toggleVisibility}
+              aria-pressed={isVisible}
+              data-password-toggle
+            >
+              {isVisible ? hideText : showText}
+            </button>
+          ) : undefined
+        }
+        label={label}
+      />
+    );
+  },
+);
+PasswordField.displayName = 'PasswordField';

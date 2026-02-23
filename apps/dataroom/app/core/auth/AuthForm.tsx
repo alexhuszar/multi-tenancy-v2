@@ -84,53 +84,63 @@ export const AuthForm = ({ type }: { type: FormType }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="form-container">
         <h1 className="form-title">
           {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
         </h1>
-
         {type === 'sign-up' && (
           <FormField
             control={form.control}
             name="fullName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="form-input">
                 <FormControl>
                   <Input {...field} label="Full Name" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="form-message" />
               </FormItem>
             )}
           />
         )}
-
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="form-input">
               <FormControl>
                 <Input {...field} type="email" label="Email" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="form-message" />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem className="form-input-password">
+              <FormControl>
+                <PasswordField {...field} label="Password" />
+              </FormControl>
+              <FormMessage className="form-message" />
             </FormItem>
           )}
         />
 
-        <PasswordField
-          control={form.control}
-          name="password"
-          label="Password"
-        />
-
         {type === 'sign-up' && (
-          <PasswordField
+          <FormField
             control={form.control}
             name="confirmPassword"
-            label="Confirm Password"
+            render={({ field }) => (
+              <FormItem className="form-input-password">
+                <FormControl>
+                  <PasswordField {...field} label="Confirm Password" />
+                </FormControl>
+                <FormMessage className="form-message" />
+              </FormItem>
+            )}
           />
         )}
-
         <Button
           type="submit"
           disabled={loading}
@@ -139,27 +149,26 @@ export const AuthForm = ({ type }: { type: FormType }) => {
         >
           {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
         </Button>
-
-        {error && <p className="mt-2 text-red-500">*{error}</p>}
-
+        {error && <p className="form-message" role="alert" aria-live="assertive">*{error}</p>}
         <Button
           type="button"
           variant="outline"
-          className="mt-4 w-full"
+          className="mt-4 rounded-md"
           onClick={handleGoogleAuth}
           disabled={loading}
         >
-          <Image src={googleIcon} alt="Google" width={18} height={18} />
-          <span className="ml-2">Continue with Google</span>
+          <span className="flex items-center justify-center">
+            <Image src={googleIcon} alt="Google" width={18} height={18} />
+            <span className="ml-2">Continue with Google</span>
+          </span>
         </Button>
-
         <p className="mt-4 text-center">
           {type === 'sign-in'
             ? "Don't have an account?"
             : 'Already have an account?'}
           <Link
             href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-            className="text-brand ml-1 font-medium"
+            className="text-primary ml-1 font-medium"
           >
             {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
           </Link>
