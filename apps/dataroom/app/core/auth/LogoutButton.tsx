@@ -12,7 +12,12 @@ export const LogoutButton = () => {
   };
 
   return (
-    <Button onClick={handleSignOut} variant="outline" size="sm">
+    <Button
+      onClick={handleSignOut}
+      variant="outline"
+      size="sm"
+      aria-label="Log out"
+    >
       <LogOut />
     </Button>
   );

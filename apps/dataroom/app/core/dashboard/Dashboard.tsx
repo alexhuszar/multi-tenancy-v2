@@ -15,7 +15,7 @@ export const Dashboard = () => {
         <Search className="mt-1 flex w-full justify-center" />
 
         <div className="h-full gap-4 overflow-auto p-4 xl:p-8">
-          {isLoading /*&& isDataLoading*/ && <Loading />}
+          {isLoading && <Loading />}
           {isAuthenticated && user && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-auto gap-2">

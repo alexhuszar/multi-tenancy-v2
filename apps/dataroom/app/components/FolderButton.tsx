@@ -5,7 +5,6 @@ import { FolderPlus } from 'lucide-react';
 import { Button } from './Button';
 import { Dialog } from './Dialog';
 import { cn } from '@multi-tenancy/design-system';
-import { twMerge } from 'tailwind-merge';
 import { CreateFolderForm } from '../core/folder/CreateFolderForm';
 
 interface Props {
@@ -14,7 +13,7 @@ interface Props {
 }
 
 const getButtonContentStyles = ({ className }: { className?: string }) =>
-  twMerge(cn('[&>span]:flex [&>span]:items-center [&>span]:gap-3'), className);
+  cn('[&>span]:flex [&>span]:items-center [&>span]:gap-3', className);
 
 export const FolderButton = ({ accountId, className }: Props) => {
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);

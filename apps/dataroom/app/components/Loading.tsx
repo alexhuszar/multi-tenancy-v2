@@ -1,12 +1,8 @@
 import { cn } from '@multi-tenancy/design-system';
 import { Loader2 } from 'lucide-react';
-import { twMerge } from 'tailwind-merge';
 
-function getLoadingWrapStyles({ className }: { className?: string }) {
-  return twMerge(
-    cn('col-start-1 row-start-1 z-10 grid place-items-center', className),
-  );
-}
+const getLoadingWrapStyles = ({ className }: { className?: string }) =>
+  cn('col-start-1 row-start-1 z-10 grid place-items-center', className);
 
 export const Loading = ({ className }: { className?: string }) => (
   <div className={getLoadingWrapStyles({ className })}>

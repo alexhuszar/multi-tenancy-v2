@@ -89,6 +89,9 @@ pre {
     @apply scroll-smooth;
   }
 
+}
+
+@layer utilities {
   /* Remove scrollbar */
   .remove-scrollbar::-webkit-scrollbar {
     width: 0px;
@@ -108,9 +111,7 @@ pre {
   .remove-scrollbar::-webkit-scrollbar-thumb:hover {
     background: transparent;
   }
-}
 
-@layer utilities {
 
   .form-container {
     @apply flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8;

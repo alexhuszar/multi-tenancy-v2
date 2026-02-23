@@ -1,4 +1,3 @@
-import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -11,16 +10,11 @@ import { LogoutButton } from '../core/auth/LogoutButton';
 
 type NavigationBarProps = PrimitiveNavigationBarProps;
 
-const getNavigationBarStyles = ({ className }: { className?: string }) => {
-  return twMerge(cn('w-full bg-white border-b border-gray-200', className));
-};
+const getNavigationBarStyles = ({ className }: { className?: string }) =>
+  cn('w-full bg-white border-b border-gray-200', className);
 
-const getNavListMenuStyles = ({ className }: { className?: string }) => {
-  return twMerge(
-    cn('grid w-full grid-cols-[auto_1fr_auto] items-center px-4 py-3'),
-    className,
-  );
-};
+const getNavListMenuStyles = ({ className }: { className?: string }) =>
+  cn('grid w-full grid-cols-[auto_1fr_auto] items-center px-4 py-3', className);
 
 export const NavigationBar = ({
   className,
@@ -29,6 +23,7 @@ export const NavigationBar = ({
 }: NavigationBarProps) => {
   return (
     <PrimitiveNavigationBar
+      {...props}
       className={getNavigationBarStyles({ className })}
       navListMenuClassName={getNavListMenuStyles({
         className: navListMenuClassName,
@@ -43,7 +38,6 @@ export const NavigationBar = ({
       }
       isTitleCentered={false}
       NavigationRightSlot={<LogoutButton />}
-      {...props}
     />
   );
 };

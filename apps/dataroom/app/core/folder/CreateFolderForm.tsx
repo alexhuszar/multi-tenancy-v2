@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import * as z from 'zod';
-import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@multi-tenancy/design-system';
 import {
@@ -17,16 +17,19 @@ import { CreateFolderSchema } from './folder.schemas';
 
 type CreateFolderValues = z.infer<typeof CreateFolderSchema>;
 
-export const CreateFolderForm = () => {
+interface CreateFolderFormProps {
+  accountId: string;
+}
+
+export const CreateFolderForm = ({ accountId }: CreateFolderFormProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const form = useForm<CreateFolderValues>({
-    resolver: zodResolver(
-      CreateFolderSchema,
-    ) as unknown as Resolver<CreateFolderValues>,
+    resolver: zodResolver(CreateFolderSchema),
     defaultValues: {
       name: '',
+      accountId,
     },
   });
 
@@ -73,7 +76,7 @@ export const CreateFolderForm = () => {
         </Button>
         {error && (
           <p className="form-message" role="alert" aria-live="assertive">
-            *{error}
+            {error}
           </p>
         )}
       </form>
