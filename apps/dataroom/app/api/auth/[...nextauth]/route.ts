@@ -2,6 +2,14 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import type { Provider } from 'next-auth/providers/index';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { Client, Account } from 'node-appwrite';
+import { appwriteConfig, SessionService } from '@multi-tenancy/appwrite';
+import {
+  getUserByEmail,
+  getUserByid,
+  createAccount,
+  createGoogleUser,
+} from '../../../actions/user.actions';
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -13,10 +21,17 @@ if (!process.env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET environment variable is required');
 }
 
+
+type UserWithMeta = {
+  provider?: 'google' | 'credentials';
+  emailVerified?: boolean;
+  otpUserId?: string;
+};
+
 const providers: Provider[] = [
   GoogleProvider({
-    clientId: process.env.GOOGLE_CLIENT_ID!,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     authorization: {
       params: {
         prompt: 'consent',
@@ -33,67 +48,63 @@ const providers: Provider[] = [
       mode: { label: 'Mode', type: 'text' },
     },
     async authorize(credentials) {
-      if (!credentials?.email || !credentials?.password) {
-        throw new Error('Email and password required');
+      if (!credentials?.email) throw new Error('Email required');
+
+      const { email, mode, name, password } = credentials;
+
+      if (mode === 'signup') {
+        const { accountId, otpUserId } = await createAccount({
+          fullName: name ?? '',
+          email,
+          password,
+        });
+
+        return {
+          id: accountId,
+          email,
+          name: name ?? '',
+          provider: 'credentials' as const,
+          emailVerified: false,
+          otpUserId,
+        };
+      } else {
+
+        const tempClient = new Client()
+          .setEndpoint(appwriteConfig.endpointUrl)
+          .setProject(appwriteConfig.projectId);
+        const tempAccount = new Account(tempClient);
+
+        let appwriteSession;
+        try {
+          appwriteSession = await tempAccount.createEmailPasswordSession({
+            email,
+            password,
+          });
+        } catch {
+          throw new Error('Invalid email or password');
+        }
+
+        try {
+          const { users } = new SessionService().createAdminSession();
+          await users.deleteSession({
+            userId: appwriteSession.userId,
+            sessionId: appwriteSession.$id,
+          });
+        } catch {
+          // Non-fatal: session will expire naturally
+        }
+
+        const appwriteUser = await getUserByid(appwriteSession.userId);
+        if (!appwriteUser) throw new Error('No account found for this email');
+
+        return {
+          id: appwriteUser.$id,
+          email,
+          name: appwriteUser.fullName,
+          provider: 'credentials' as const,
+          emailVerified: true,
+        };
       }
-
-      const { email, mode, name } = credentials;
-
-      return {
-        id: email,
-        email,
-        name,
-        mode,
-      };
-
-      //   if (mode === 'signup') {
-      //     const existingUser = await userStore.getUserByEmail(email);
-      //     if (existingUser) {
-      //       throw new Error('User already exists');
-      //     }
-
-      //     const passwordHash = await hashPasswordBcrypt(password);
-      //     const user = await userStore.createUser({
-      //       email,
-      //       name: name || email.split('@')[0],
-      //       passwordHash,
-      //       provider: 'credentials',
-      //     });
-
-      //     return {
-      //       id: user.id,
-      //       email: user.email,
-      //       name: user.name,
-      //       provider: 'credentials',
-      //     };
-      //   } else {
-      //     const user = await userStore.getUserByEmail(email);
-      //     if (!user) {
-      //       throw new Error('Invalid credentials');
-      //     }
-
-      //     if (user.provider !== 'credentials') {
-      //       throw new Error(
-      //         `This account uses ${user.provider} sign-in. Please use that method instead.`,
-      //       );
-      //     }
-
-      //     if (!user.passwordHash) {
-      //       throw new Error('No password set for this account');
-      //     }
-
-      //     const isValid = await verifyPassword(password, user.passwordHash);
-      //     if (!isValid) {
-      //       throw new Error('Invalid credentials');
-      //     }
-
-      //     return {
-      //       id: user.id,
-      //       email: user.email,
-      //       name: user.name,
-      //       provider: 'credentials',
-      //     };
-      //   }
     },
   }),
 ];
@@ -102,36 +113,41 @@ export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async signIn({ user, account }) {
-      //if (account?.provider === 'google') {
-      //const existingUser = await userStore.getUserByEmail(user.email!);
-      // if (!existingUser) {
-      //   const newUser = await userStore.createUser({
-      //     email: user.email!,
-      //     name: user.name || user.email!.split('@')[0],
-      //     provider: 'google',
-      //   });
-      //   user.id = newUser.id;
-      // } else {
-      //   if (existingUser.provider === 'credentials') {
-      //     throw new Error(
-      //       'This email is already registered with password. Please sign in with your password.',
-      //     );
-      //   }
-      //   user.id = existingUser.id;
-      //}
-      // }
+      if (account?.provider === 'google' && user.email) {
+        const existingUser = await getUserByEmail(user.email);
+
+        if (!existingUser) {
+          const doc = await createGoogleUser({
+            email: user.email,
+            name: user.name ?? user.email.split('@')[0],
+            image: user.image,
+            id: user.id,
+          });
+          user.id = doc.$id;
+        } else {
+          user.id = existingUser.$id;
+        }
+      }
+
       return true;
     },
 
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session: updateSession }) {
+      // Allow client-side session update (e.g. after OTP verification)
+      if (trigger === 'update' && updateSession?.emailVerified !== undefined) {
+        token.emailVerified = updateSession.emailVerified;
+      }
+
       if (user) {
+        const u = user as typeof user & UserWithMeta;
         token.accessToken = account?.access_token;
         token.id = user.id;
-        token.provider =
-          (user as { provider?: string }).provider ||
-          account?.provider ||
-          'credentials';
+        token.provider = u.provider || account?.provider as 'google' | 'credentials' | undefined || 'credentials';
+        token.emailVerified =
+          u.emailVerified ?? (account?.provider === 'google' ? true : false);
+        token.otpUserId = u.otpUserId;
       }
+
       return token;
     },
 
@@ -140,6 +156,8 @@ export const authOptions: NextAuthOptions = {
         session.accessToken = token.accessToken as string | undefined;
         session.user.id = token.id || '';
         session.user.provider = token.provider || 'credentials';
+        session.user.emailVerified = token.emailVerified;
+        session.user.otpUserId = token.otpUserId;
       }
 
       return session;

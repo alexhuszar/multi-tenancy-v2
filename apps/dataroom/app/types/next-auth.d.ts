@@ -9,7 +9,9 @@ declare module 'next-auth' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      provider?: string;
+      provider?: 'google' | 'credentials';
+      emailVerified?: boolean;
+      otpUserId?: string;
     };
   }
 }
@@ -17,7 +19,9 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
-    provider?: string;
+    provider?: 'google' | 'credentials';
     accessToken?: string;
+    emailVerified?: boolean;
+    otpUserId?: string;
   }
 }

@@ -5,6 +5,7 @@ import {
   useSession,
   signIn as nextAuthSignIn,
   signOut as nextAuthSignOut,
+  getSession,
 } from 'next-auth/react';
 
 type User = {
@@ -13,17 +14,17 @@ type User = {
   accountId: string;
 };
 
-type AuthResult = { accountId: string; error?: string } | null;
+type AuthResult = {
+  accountId: string;
+  otpUserId?: string;
+  error?: string;
+} | null;
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  signUp: (
-    name: string,
-    email: string,
-    password: string,
-  ) => Promise<AuthResult>;
+  signUp: (name: string, email: string, password: string) => Promise<AuthResult>;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
   getCurrentUser: () => User | null;
@@ -65,7 +66,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return { accountId: '', error: result.error };
         }
 
-        return result?.ok ? { accountId: params.email } : null;
+        if (!result?.ok) return null;
+
+        if (mode === 'signup') {
+          const freshSession = await getSession();
+          
+          return {
+            accountId: params.email,
+            otpUserId: freshSession?.user?.otpUserId,
+          };
+        }
+
+        return { accountId: params.email };
       } catch (error) {
         return {
           accountId: '',

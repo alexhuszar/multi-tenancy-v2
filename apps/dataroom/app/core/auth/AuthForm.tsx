@@ -55,14 +55,23 @@ export const AuthForm = ({ type }: { type: FormType }) => {
         const data = values as SignUpValues;
         const result = await signUp(data.fullName, data.email, data.password);
 
-        if (result?.error) setError(result.error);
-        else router.push('/');
+        if (result?.error) {
+          setError(result.error);
+        } else if (result?.otpUserId) {
+          router.push(`/verify-email?userId=${result.otpUserId}`);
+        } else {
+          router.push('/');
+        }
       } else {
         const data = values as SignInValues;
         const result = await signIn(data.email, data.password);
 
-        if (result?.error) setError(result.error);
-        else router.push('/');
+        if (result?.error) {
+          setError(result.error);
+        }
+        else {
+          router.push('/')
+        };
       }
     } catch {
       setError('Something went wrong. Please try again.');
@@ -149,7 +158,11 @@ export const AuthForm = ({ type }: { type: FormType }) => {
         >
           {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
         </Button>
-        {error && <p className="form-message" role="alert" aria-live="assertive">*{error}</p>}
+        {error && (
+          <p className="form-message" role="alert" aria-live="assertive">
+            *{error}
+          </p>
+        )}
         <Button
           type="button"
           variant="outline"
@@ -168,7 +181,7 @@ export const AuthForm = ({ type }: { type: FormType }) => {
             : 'Already have an account?'}
           <Link
             href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-            className="text-primary ml-1 font-medium"
+            className="ml-1 font-medium text-primary"
           >
             {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
           </Link>

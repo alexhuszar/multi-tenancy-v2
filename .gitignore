@@ -4,6 +4,7 @@
 /node_modules
 apps/*/node_modules
 libs/*/node_modules
+libs/**/dist
 /dist
 /.pnp
 .pnp.js
