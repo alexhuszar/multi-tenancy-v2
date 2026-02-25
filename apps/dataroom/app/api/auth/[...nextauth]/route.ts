@@ -1,5 +1,6 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import type { Provider } from 'next-auth/providers/index';
+import type { AppUserFields } from '../../../types/next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { Client, Account } from 'node-appwrite';
@@ -11,6 +12,9 @@ import {
   createGoogleUser,
 } from '../../../actions/user.actions';
 import { sendEmailOtp } from '../../../actions/otp.actions';
+
+type AppUser = User & AppUserFields;
+const isAppUser = (user: User): user is AppUser => 'emailVerified' in user;
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -41,7 +45,7 @@ const providers: Provider[] = [
       name: { label: 'Name', type: 'text' },
       mode: { label: 'Mode', type: 'text' },
     },
-    async authorize(credentials) {
+    async authorize(credentials): Promise<AppUser | null> {
       if (!credentials?.email) throw new Error('Email required');
 
       const { email, mode, name, password } = credentials;
@@ -80,8 +84,9 @@ const providers: Provider[] = [
           throw new Error('Invalid email or password');
         }
 
+        const { users } = new SessionService().createAdminSession();
+
         try {
-          const { users } = new SessionService().createAdminSession();
           await users.deleteSession({
             userId: appwriteSession.userId,
             sessionId: appwriteSession.$id,
@@ -92,6 +97,20 @@ const providers: Provider[] = [
 
         const appwriteUser = await getUserByid(appwriteSession.userId);
         if (!appwriteUser) throw new Error('No account found for this email');
+
+        const appwriteAccount = await users.get({ userId: appwriteSession.userId });
+
+        if (!appwriteAccount.emailVerification) {
+          const { userId } = await sendEmailOtp(email);
+          return {
+            id: appwriteUser.$id,
+            email,
+            name: appwriteUser.fullName,
+            provider: 'credentials' as const,
+            emailVerified: false,
+            otpUserId: userId,
+          };
+        }
 
         return {
           id: appwriteUser.$id,
@@ -109,10 +128,8 @@ export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async signIn({ user, account }) {
-      if (user.emailVerified === false && user.otpUserId) {
-        return `/verify-email?userId=${user.otpUserId}`;
-      }
 
+      
       if (account?.provider === 'google' && user.email) {
         const existingUser = await getUserByEmail(user.email);
 
@@ -141,10 +158,15 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.accessToken = account?.access_token;
         token.id = user.id;
-        token.provider = user.provider || account?.provider as 'google' | 'credentials' | undefined || 'credentials';
-        token.emailVerified =
-        user.emailVerified ?? (account?.provider === 'google' ? true : false);
-        token.otpUserId = user.otpUserId;
+
+        if (isAppUser(user)) {
+          token.provider = user.provider;
+          token.emailVerified = user.emailVerified ?? false;
+          token.otpUserId = user.otpUserId;
+        } else {
+          token.provider = account?.provider as 'google' | 'credentials' | undefined;
+          token.emailVerified = account?.provider === 'google';
+        }
       }
 
       return token;

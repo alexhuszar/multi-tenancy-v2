@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import {
   useSession,
+  getSession,
   signIn as nextAuthSignIn,
   signOut as nextAuthSignOut,
 } from 'next-auth/react';
@@ -63,10 +64,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirect: false,
         });
 
-        // Server issued a redirect (e.g. signup → /verify-email after OTP sent)
-        if (!result?.ok && result?.url) {
-          router.push(result.url);
-          return null;
+        if (result?.ok) {
+          const freshSession = await getSession();
+          if (freshSession?.user?.emailVerified === false && freshSession?.user?.otpUserId) {
+            router.push(`/verify-email?userId=${freshSession.user.otpUserId}`);
+            return null;
+          }
         }
 
         if (result?.error) {
