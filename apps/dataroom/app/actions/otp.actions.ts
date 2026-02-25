@@ -33,11 +33,11 @@ export const verifyEmailOtp = async ({
 }): Promise<void> => {
   const session = new SessionService();
   const { account } = session.createPublicSession();
-  const { tablesDB } = session.createAdminSession();
+  const { tablesDB, users } = session.createAdminSession();
   const rateLimiter = new AppwriteRateLimiter(tablesDB);
 
   try {
-    const otpService = new OtpService(account, rateLimiter);
+    const otpService = new OtpService(account, rateLimiter, users);
 
     await otpService.verifySession(userId, secret);
   } catch (error) {

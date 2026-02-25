@@ -1,11 +1,8 @@
 import 'next-auth';
 import 'next-auth/jwt';
+import type { AppUserFields } from './auth';
 
-export type AppUserFields = {
-  provider?: 'google' | 'credentials';
-  emailVerified?: boolean;
-  otpUserId?: string;
-};
+export type { AppUserFields };
 
 declare module 'next-auth' {
   interface Session {

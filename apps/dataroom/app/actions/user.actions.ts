@@ -16,7 +16,7 @@ export const getUserByEmail = async (email: string): Promise<UserRow | null> => 
   return new UserService(tablesDB, users).getByEmail(email);
 };
 
-export const getUserByid = async (
+export const getUserById = async (
   id: string,
 ): Promise<UserRow | null> => {
   const session = new SessionService();

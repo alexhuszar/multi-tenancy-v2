@@ -1,8 +1,7 @@
-import { Client, Account } from 'node-appwrite';
 import type { User } from 'next-auth';
-import { appwriteConfig, SessionService } from '@multi-tenancy/appwrite';
-import type { AppUserFields } from '../types/next-auth';
-import { getUserByid, createAccount } from './user.actions';
+import { SessionService } from '@multi-tenancy/appwrite';
+import type { AppUserFields } from '../types/auth';
+import { getUserById, createAccount } from './user.actions';
 import { sendEmailOtp } from './otp.actions';
 
 type AppUser = User & AppUserFields;
@@ -34,10 +33,7 @@ export async function authorizeSignIn(params: {
   email: string;
   password: string;
 }): Promise<AppUser> {
-  const tempClient = new Client()
-    .setEndpoint(appwriteConfig.endpointUrl)
-    .setProject(appwriteConfig.projectId);
-  const tempAccount = new Account(tempClient);
+  const { account: tempAccount } = new SessionService().createPublicSession();
 
   let appwriteSession;
   try {
@@ -60,7 +56,7 @@ export async function authorizeSignIn(params: {
     // Non-fatal: session will expire naturally
   }
 
-  const appwriteUser = await getUserByid(appwriteSession.userId);
+  const appwriteUser = await getUserById(appwriteSession.userId);
   if (!appwriteUser) throw new Error('No account found for this email');
 
   const appwriteAccount = await users.get({ userId: appwriteSession.userId });

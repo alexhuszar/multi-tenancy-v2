@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/libs/services/appwrite",
+    "outDir": "../../../dist/libs/services/appwrite",
     "declaration": true,
     "declarationMap": true,
     "rootDir": "src",

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (typeof secret !== 'string' || secret.length !== 6) {
+    if (typeof secret !== 'string' || !/^\d{6}$/.test(secret)) {
       return NextResponse.json(
         { error: 'Invalid OTP format' },
         { status: 400 },

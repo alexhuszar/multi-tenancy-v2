@@ -5,8 +5,18 @@
   "projectType": "library",
   "tags": ["scope:shared", "type:lib", "type:service"],
   "targets": {
+    "build-types": {
+      "executor": "nx:run-commands",
+      "inputs": ["production"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true,
+      "options": {
+        "command": "npx tsc -p libs/services/appwrite/tsconfig.json --emitDeclarationOnly"
+      }
+    },
     "build": {
       "executor": "@nx/js:swc",
+      "dependsOn": ["build-types"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/services/appwrite",

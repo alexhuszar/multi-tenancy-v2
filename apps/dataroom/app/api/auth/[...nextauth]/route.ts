@@ -1,8 +1,9 @@
 import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import type { Provider } from 'next-auth/providers/index';
-import type { AppUserFields } from '../../../types/next-auth';
+import type { AppUserFields } from '../../../types/auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { SessionService } from '@multi-tenancy/appwrite';
 import { getUserByEmail, createGoogleUser } from '../../../actions/user.actions';
 import { authorizeSignUp, authorizeSignIn } from '../../../actions/auth.service';
 
@@ -72,8 +73,12 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user, account, trigger, session: updateSession }) {
-      // Allow client-side session update (e.g. after OTP verification)
-      if (trigger === 'update' && updateSession?.emailVerified !== undefined) {
+      // When client claims emailVerified: true, re-verify against Appwrite
+      if (trigger === 'update' && updateSession?.emailVerified === true && token.id) {
+        const { users } = new SessionService().createAdminSession();
+        const appwriteAccount = await users.get({ userId: token.id as string });
+        token.emailVerified = appwriteAccount.emailVerification;
+      } else if (trigger === 'update' && updateSession?.emailVerified !== undefined) {
         token.emailVerified = updateSession.emailVerified;
       }
 
