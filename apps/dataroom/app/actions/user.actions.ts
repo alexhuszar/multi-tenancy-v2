@@ -1,10 +1,8 @@
 'use server';
 
-
 import {
   SessionService,
   UserService,
-  OtpService,
   parseStringify,
   type UserRow,
   ID,
@@ -36,16 +34,17 @@ export const createAccount = async ({
   fullName: string;
   email: string;
   password: string;
-}): Promise<{ accountId: string; otpUserId: string }> => {
-    const session = new SessionService(); 
-  const { tablesDB, users, account } = session.createAdminSession();
-  
+}): Promise<{ accountId: string }> => {
+  const session = new SessionService();
+  const { tablesDB, users } = session.createAdminSession();
+
+     
   const userService = new UserService(tablesDB, users);
 
   const existing = await userService.getByEmail(email);
-  
-  if (existing) throw new Error('An account with this email already exists');
 
+  if (existing) throw new Error('An account with this email already exists')
+  
   const newUser = await userService.createAuthUser({
     userId: ID.unique(),
     email,
@@ -53,18 +52,14 @@ export const createAccount = async ({
     name: fullName,
   });
 
-  const otpService = new OtpService(account);
-
-  const otpUserId = await otpService.sendEmailToken(email);
-
   await userService.createRow({
     email,
     fullName,
     accountId: newUser.$id,
     provider: 'credentials',
   });
-
-  return parseStringify({ accountId: newUser.$id, otpUserId: otpUserId.userId });
+  
+  return parseStringify({ accountId: newUser.$id});
 };
 
 export const createGoogleUser = async ({

@@ -19,6 +19,10 @@ export class AppwriteClientFactory {
 
     return this.createBaseClient().setKey(appwriteConfig.secretKey);
   }
+
+  static createPublicClient(): Client {
+    return this.createBaseClient();
+  }
 }
 
 export class SessionService {
@@ -36,6 +40,16 @@ export class SessionService {
       },
       get tablesDB() {
         return new TablesDB(client);
+      },
+    };
+  }
+
+  createPublicSession() {
+    const client = AppwriteClientFactory.createPublicClient();
+
+    return {
+      get account() {
+        return new Account(client);
       },
     };
   }

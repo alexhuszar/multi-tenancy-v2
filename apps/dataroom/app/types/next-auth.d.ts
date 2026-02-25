@@ -1,7 +1,19 @@
 import 'next-auth';
 import 'next-auth/jwt';
 
+type AppUserFields = {
+  provider?: 'google' | 'credentials';
+  emailVerified?: boolean;
+  otpUserId?: string;
+};
+
 declare module 'next-auth' {
+  interface User {
+    provider?: 'google' | 'credentials';
+    emailVerified?: boolean;
+    otpUserId?: string;
+  }
+
   interface Session {
     accessToken?: string;
     user: {
@@ -9,19 +21,13 @@ declare module 'next-auth' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      provider?: 'google' | 'credentials';
-      emailVerified?: boolean;
-      otpUserId?: string;
-    };
+    } & AppUserFields;
   }
 }
 
 declare module 'next-auth/jwt' {
-  interface JWT {
+  interface JWT extends AppUserFields {
     id?: string;
-    provider?: 'google' | 'credentials';
     accessToken?: string;
-    emailVerified?: boolean;
-    otpUserId?: string;
   }
 }

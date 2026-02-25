@@ -57,11 +57,7 @@ export const AuthForm = ({ type }: { type: FormType }) => {
 
         if (result?.error) {
           setError(result.error);
-        } else if (result?.otpUserId) {
-          router.push(`/verify-email?userId=${result.otpUserId}`);
-        } else {
-          router.push('/');
-        }
+        } 
       } else {
         const data = values as SignInValues;
         const result = await signIn(data.email, data.password);

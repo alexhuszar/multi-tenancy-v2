@@ -5,7 +5,7 @@ export type UserRow = {
   $id: string;
   email: string;
   fullName: string;
-  avatar: string;
+  avatar?: string | null;
   accountId: string;
   provider: string;
 };
@@ -24,6 +24,10 @@ export class UserService {
       tableId: appwriteConfig.usersCollectionId,
       queries: [Query.equal('email', [email])],
     });
+
+    if (result.rows.length > 1) {
+      throw new Error('Data integrity violation: multiple users found for email');
+    }
 
     return (result.rows[0] as unknown as UserRow) ?? null;
   }

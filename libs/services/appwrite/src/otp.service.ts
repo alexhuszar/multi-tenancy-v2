@@ -1,17 +1,24 @@
 import { ID, Account, AppwriteException } from "node-appwrite";
-import { checkOtpRateLimit, recordOtpFailure, resetOtpRateLimit } from "./otp-rate-limiter";
+import { AppwriteRateLimiter } from "./otp-rate-limiter";
 
 export class OtpService {
-  constructor(private readonly account: Account) {}
+  constructor(
+    private readonly account: Account,
+    private readonly rateLimiter: AppwriteRateLimiter,
+  ) {}
 
   async sendEmailToken(email: string): Promise<{ userId: string }> {
     this.validateEmail(email);
+
+    await this.rateLimiter.checkSendCooldown(email);
 
     try {
       const result = await this.account.createEmailToken({
         userId: ID.unique(),
         email,
       });
+
+      await this.rateLimiter.recordEmailSend(email);
 
       return { userId: result.userId };
     } catch (error) {
@@ -26,17 +33,17 @@ export class OtpService {
     this.validateUserId(userId);
     this.validateSecret(secret);
 
-    checkOtpRateLimit(userId);
+    await this.rateLimiter.checkVerifyLimit(userId);
 
     try {
       await this.account.createSession({ userId, secret });
-      
-      resetOtpRateLimit(userId);
-      
+
+      await this.rateLimiter.resetVerifyLimit(userId);
+
       return { success: true };
     } catch (error) {
-      recordOtpFailure(userId);
-      
+      await this.rateLimiter.recordVerifyFailure(userId);
+
       this.handleAppwriteError(error, "OTP verification failed");
     }
   }

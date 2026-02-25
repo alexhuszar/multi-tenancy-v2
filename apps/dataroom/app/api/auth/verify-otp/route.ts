@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     await verifyEmailOtp({ userId, secret });
+    
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     if (isRateLimitError(error)) {

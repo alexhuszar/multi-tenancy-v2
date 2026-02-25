@@ -10,6 +10,7 @@ import {
   createAccount,
   createGoogleUser,
 } from '../../../actions/user.actions';
+import { sendEmailOtp } from '../../../actions/otp.actions';
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -20,13 +21,6 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET environment variable is required');
 }
-
-
-type UserWithMeta = {
-  provider?: 'google' | 'credentials';
-  emailVerified?: boolean;
-  otpUserId?: string;
-};
 
 const providers: Provider[] = [
   GoogleProvider({
@@ -53,11 +47,13 @@ const providers: Provider[] = [
       const { email, mode, name, password } = credentials;
 
       if (mode === 'signup') {
-        const { accountId, otpUserId } = await createAccount({
+        const { accountId } = await createAccount({
           fullName: name ?? '',
           email,
           password,
         });
+
+        const { userId } = await sendEmailOtp(email);
 
         return {
           id: accountId,
@@ -65,7 +61,7 @@ const providers: Provider[] = [
           name: name ?? '',
           provider: 'credentials' as const,
           emailVerified: false,
-          otpUserId,
+          otpUserId: userId,
         };
       } else {
 
@@ -113,6 +109,10 @@ export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async signIn({ user, account }) {
+      if (user.emailVerified === false && user.otpUserId) {
+        return `/verify-email?userId=${user.otpUserId}`;
+      }
+
       if (account?.provider === 'google' && user.email) {
         const existingUser = await getUserByEmail(user.email);
 
@@ -139,13 +139,12 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (user) {
-        const u = user as typeof user & UserWithMeta;
         token.accessToken = account?.access_token;
         token.id = user.id;
-        token.provider = u.provider || account?.provider as 'google' | 'credentials' | undefined || 'credentials';
+        token.provider = user.provider || account?.provider as 'google' | 'credentials' | undefined || 'credentials';
         token.emailVerified =
-          u.emailVerified ?? (account?.provider === 'google' ? true : false);
-        token.otpUserId = u.otpUserId;
+        user.emailVerified ?? (account?.provider === 'google' ? true : false);
+        token.otpUserId = user.otpUserId;
       }
 
       return token;

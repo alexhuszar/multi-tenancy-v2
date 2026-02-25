@@ -5,8 +5,8 @@ import {
   useSession,
   signIn as nextAuthSignIn,
   signOut as nextAuthSignOut,
-  getSession,
 } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 type User = {
   email: string;
@@ -34,6 +34,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   const user: User | null = useMemo(() => {
     if (!session?.user) return null;
@@ -62,20 +63,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirect: false,
         });
 
+        // Server issued a redirect (e.g. signup → /verify-email after OTP sent)
+        if (!result?.ok && result?.url) {
+          router.push(result.url);
+          return null;
+        }
+
         if (result?.error) {
           return { accountId: '', error: result.error };
         }
 
         if (!result?.ok) return null;
-
-        if (mode === 'signup') {
-          const freshSession = await getSession();
-          
-          return {
-            accountId: params.email,
-            otpUserId: freshSession?.user?.otpUserId,
-          };
-        }
 
         return { accountId: params.email };
       } catch (error) {
@@ -85,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
       }
     },
-    [],
+    [router],
   );
 
   const signUp = useCallback(
