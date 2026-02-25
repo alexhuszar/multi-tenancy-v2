@@ -1,6 +1,5 @@
 'use client';
 
-import { forwardRef } from 'react';
 import {
   Button as PrimitiveButton,
   ButtonProps as PrimitiveButtonProps,
@@ -45,26 +44,26 @@ const getButtonStyles = ({
     className,
   );
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { variant = 'primary', size = 'md', className, disabled, ...props },
-    ref,
-  ) => {
-    return (
-      <PrimitiveButton
-        ref={ref}
-        className={getButtonStyles({
-          variant,
-          size,
-          disabled,
-          className,
-          loading: props.isLoading,
-        })}
-        disabled={disabled}
-        {...props}
-      />
-    );
-  },
-);
-
-Button.displayName = 'Button';
+export const Button = ({
+  variant = 'primary',
+  size = 'md',
+  className,
+  disabled,
+  ref,
+  ...props
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  return (
+    <PrimitiveButton
+      ref={ref}
+      className={getButtonStyles({
+        variant,
+        size,
+        disabled,
+        className,
+        loading: props.isLoading,
+      })}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};

@@ -9,7 +9,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex max-h-[800px] max-w-[430px] flex-col justify-center space-y-12">
           <Image
             src={logoImage}
-            alt="logo"
+            alt=""
+            role="presentation"
             width={224}
             height={224}
             className="h-auto"
@@ -27,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="mb-8 flex flex-col items-center lg:hidden">
           <Image
             src={logoImage}
-            alt="logo"
+            alt="DataRoom logo"
             width={512}
             height={512}
             className="h-auto w-[100px]"

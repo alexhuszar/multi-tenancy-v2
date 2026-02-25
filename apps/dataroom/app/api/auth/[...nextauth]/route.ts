@@ -3,15 +3,8 @@ import type { Provider } from 'next-auth/providers/index';
 import type { AppUserFields } from '../../../types/next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { Client, Account } from 'node-appwrite';
-import { appwriteConfig, SessionService } from '@multi-tenancy/appwrite';
-import {
-  getUserByEmail,
-  getUserByid,
-  createAccount,
-  createGoogleUser,
-} from '../../../actions/user.actions';
-import { sendEmailOtp } from '../../../actions/otp.actions';
+import { getUserByEmail, createGoogleUser } from '../../../actions/user.actions';
+import { authorizeSignUp, authorizeSignIn } from '../../../actions/auth.service';
 
 type AppUser = User & AppUserFields;
 const isAppUser = (user: User): user is AppUser => 'emailVerified' in user;
@@ -47,79 +40,10 @@ const providers: Provider[] = [
     },
     async authorize(credentials): Promise<AppUser | null> {
       if (!credentials?.email) throw new Error('Email required');
-
       const { email, mode, name, password } = credentials;
-
-      if (mode === 'signup') {
-        const { accountId } = await createAccount({
-          fullName: name ?? '',
-          email,
-          password,
-        });
-
-        const { userId } = await sendEmailOtp(email);
-
-        return {
-          id: accountId,
-          email,
-          name: name ?? '',
-          provider: 'credentials' as const,
-          emailVerified: false,
-          otpUserId: userId,
-        };
-      } else {
-
-        const tempClient = new Client()
-          .setEndpoint(appwriteConfig.endpointUrl)
-          .setProject(appwriteConfig.projectId);
-        const tempAccount = new Account(tempClient);
-
-        let appwriteSession;
-        try {
-          appwriteSession = await tempAccount.createEmailPasswordSession({
-            email,
-            password,
-          });
-        } catch {
-          throw new Error('Invalid email or password');
-        }
-
-        const { users } = new SessionService().createAdminSession();
-
-        try {
-          await users.deleteSession({
-            userId: appwriteSession.userId,
-            sessionId: appwriteSession.$id,
-          });
-        } catch {
-          // Non-fatal: session will expire naturally
-        }
-
-        const appwriteUser = await getUserByid(appwriteSession.userId);
-        if (!appwriteUser) throw new Error('No account found for this email');
-
-        const appwriteAccount = await users.get({ userId: appwriteSession.userId });
-
-        if (!appwriteAccount.emailVerification) {
-          const { userId } = await sendEmailOtp(email);
-          return {
-            id: appwriteUser.$id,
-            email,
-            name: appwriteUser.fullName,
-            provider: 'credentials' as const,
-            emailVerified: false,
-            otpUserId: userId,
-          };
-        }
-
-        return {
-          id: appwriteUser.$id,
-          email,
-          name: appwriteUser.fullName,
-          provider: 'credentials' as const,
-          emailVerified: true,
-        };
-      }
+      return mode === 'signup'
+        ? authorizeSignUp({ name: name ?? '', email, password })
+        : authorizeSignIn({ email, password });
     },
   }),
 ];
@@ -128,8 +52,6 @@ export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async signIn({ user, account }) {
-
-      
       if (account?.provider === 'google' && user.email) {
         const existingUser = await getUserByEmail(user.email);
 
