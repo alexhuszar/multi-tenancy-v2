@@ -1,5 +1,5 @@
 import { AuthForm } from '../../core/auth/AuthForm';
 
-const SignIn = () => <AuthForm type="sign-in" />;
+const SignIn = () => <AuthForm mode="sign-in" />;
 
 export default SignIn;

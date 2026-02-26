@@ -22,22 +22,30 @@ export const NavigationBar = ({
   ...props
 }: NavigationBarProps) => {
   return (
-    <PrimitiveNavigationBar
-      {...props}
-      className={getNavigationBarStyles({ className })}
-      navListMenuClassName={getNavListMenuStyles({
-        className: navListMenuClassName,
-      })}
-      title={
-        <Link href="/" className="flex items-center gap-2">
-          <Image src={logoImage} alt="logo" width={52} height={52} />
-          <span className="h4 hidden uppercase text-primary lg:block">
-            Data Room
-          </span>
-        </Link>
-      }
-      isTitleCentered={false}
-      NavigationRightSlot={<LogoutButton />}
-    />
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-2 focus:bg-white focus:text-primary-600 focus:underline"
+      >
+        Skip to main content
+      </a>
+      <PrimitiveNavigationBar
+        {...props}
+        className={getNavigationBarStyles({ className })}
+        navListMenuClassName={getNavListMenuStyles({
+          className: navListMenuClassName,
+        })}
+        title={
+          <Link href="/" className="flex items-center gap-2">
+            <Image src={logoImage} alt="logo" width={52} height={52} />
+            <span className="h4 hidden uppercase text-primary lg:block">
+              Data Room
+            </span>
+          </Link>
+        }
+        isTitleCentered={false}
+        NavigationRightSlot={<LogoutButton />}
+      />
+    </>
   );
 };

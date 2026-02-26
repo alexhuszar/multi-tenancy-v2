@@ -23,7 +23,8 @@
       "@/*": ["./*"],
       "@multi-tenancy/utils": ["../../libs/utils/src/index.ts"],
       "@multi-tenancy/design-system": ["../../libs/ui/src/index.ts"],
-      "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"]
+      "@multi-tenancy/data-access": ["../../libs/data-access/src/index.ts"],
+      "@multi-tenancy/appwrite": ["../../libs/services/appwrite/src/index.ts"]
     },
     "outDir": "dist"
   },
@@ -53,6 +54,9 @@
   "references": [
     {
       "path": "../../libs/ui"
+    },
+    {
+      "path": "../../libs/services/appwrite"
     }
   ]
 }

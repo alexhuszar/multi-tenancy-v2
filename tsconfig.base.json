@@ -19,6 +19,7 @@
     "customConditions": ["@multi-tenancy/source"],
     "baseUrl": ".",
     "paths": {
+      "@multi-tenancy/appwrite": ["libs/services/appwrite/src/index.ts"],
       "@multi-tenancy/design-system/*": ["libs/ui/src/*"],
       "@multi-tenancy/utils": ["libs/utils/src/index.ts"],
     }

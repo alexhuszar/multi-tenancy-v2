@@ -35,7 +35,7 @@ export const FolderButton = ({ accountId, className }: Props) => {
         title="Create folder"
         id="create-folder-dialog"
       >
-        <CreateFolderForm />
+        <CreateFolderForm accountId={accountId} />
       </Dialog>
     </>
   );

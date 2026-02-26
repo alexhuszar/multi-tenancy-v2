@@ -6,7 +6,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <main className="flex h-screen overflow-hidden">
       <section className="flex flex-auto flex-col overflow-hidden">
         <NavigationBar />
-        {children}
+        <div id="main-content" className="flex-1 overflow-auto">
+          {children}
+        </div>
       </section>
     </main>
   );

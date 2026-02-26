@@ -4,11 +4,11 @@ type BaseProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'disabled'>;
 
 type LoadingProps =
   | {
-      isLoading?: false;
+      isLoading?: undefined;
       loadingIcon?: never;
     }
   | {
-      isLoading: true;
+      isLoading: boolean;
       loadingIcon: ReactElement;
     };
 

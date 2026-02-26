@@ -1,14 +1,16 @@
 {
   "jsc": {
-    "target": "es2017",
+    "target": "es2022",
     "parser": {
       "syntax": "typescript",
+      "tsx": true,
       "decorators": true,
       "dynamicImport": true
     },
     "transform": {
-      "decoratorMetadata": true,
-      "legacyDecorator": true
+      "react": {
+        "runtime": "automatic"
+      }
     },
     "keepClassNames": true,
     "externalHelpers": true,
@@ -19,11 +21,8 @@
   },
   "sourceMaps": true,
   "exclude": [
-    "jest.config.[ct]s",
+    "jest.config.ts",
     ".*\\.spec.tsx?$",
-    ".*\\.test.tsx?$",
-    "./src/jest-setup.ts$",
-    "./**/jest-setup.ts$",
-    ".*.js$"
+    ".*\\.test.tsx?$"
   ]
 }

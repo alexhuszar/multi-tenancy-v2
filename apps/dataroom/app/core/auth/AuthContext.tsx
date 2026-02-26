@@ -3,9 +3,11 @@
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import {
   useSession,
+  getSession,
   signIn as nextAuthSignIn,
   signOut as nextAuthSignOut,
 } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 type User = {
   email: string;
@@ -13,7 +15,11 @@ type User = {
   accountId: string;
 };
 
-type AuthResult = { accountId: string; error?: string } | null;
+type AuthResult = {
+  accountId: string;
+  otpUserId?: string;
+  error?: string;
+} | null;
 
 interface AuthContextType {
   user: User | null;
@@ -26,26 +32,27 @@ interface AuthContextType {
   ) => Promise<AuthResult>;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
-  getCurrentUser: () => User | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   const user: User | null = useMemo(() => {
     if (!session?.user) return null;
 
     const email = session.user.email;
     const name = session.user.name;
+    const id = session.user.id;
 
-    if (!email || !name) return null;
+    if (!email || !name || !id) return null;
 
     return {
       email,
       name,
-      accountId: email,
+      accountId: id,
     };
   }, [session]);
 
@@ -61,11 +68,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirect: false,
         });
 
+        if (result?.ok) {
+          const freshSession = await getSession();
+          if (
+            freshSession?.user?.emailVerified === false &&
+            freshSession?.user?.otpUserId
+          ) {
+            router.push(`/verify-email?userId=${freshSession.user.otpUserId}`);
+            return null;
+          }
+          if (!freshSession?.user?.id) {
+            return {
+              accountId: '',
+              error: 'Authentication failed. Please try again.',
+            };
+          }
+          return { accountId: freshSession.user.id };
+        }
+
         if (result?.error) {
           return { accountId: '', error: result.error };
         }
 
-        return result?.ok ? { accountId: params.email } : null;
+        return null;
       } catch (error) {
         return {
           accountId: '',
@@ -73,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
       }
     },
-    [],
+    [router],
   );
 
   const signUp = useCallback(
@@ -99,21 +124,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const isLoading = status === 'loading';
-  const isAuthenticated = Boolean(user);
-  const getCurrentUser = useCallback(() => user, [user]);
-
   const value: AuthContextType = useMemo(
     () => ({
       user,
-      isLoading,
-      isAuthenticated,
+      isLoading: status === 'loading',
+      isAuthenticated: Boolean(user) && session?.user?.emailVerified !== false,
       signUp,
       signIn,
       signOut,
-      getCurrentUser,
     }),
-    [user, isLoading, isAuthenticated, signUp, signIn, signOut, getCurrentUser],
+    [user, status, session, signUp, signIn, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

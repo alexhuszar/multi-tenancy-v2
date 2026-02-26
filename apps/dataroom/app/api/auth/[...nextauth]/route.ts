@@ -1,7 +1,20 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import type { Provider } from 'next-auth/providers/index';
+import type { AppUserFields } from '../../../types/auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { SessionService } from '@multi-tenancy/appwrite';
+import {
+  getUserByEmail,
+  createGoogleUser,
+} from '../../../actions/user.actions';
+import {
+  authorizeSignUp,
+  authorizeSignIn,
+} from '../../../actions/auth.service';
+
+type AppUser = User & AppUserFields;
+const isAppUser = (user: User): user is AppUser => 'emailVerified' in user;
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -15,8 +28,8 @@ if (!process.env.NEXTAUTH_SECRET) {
 
 const providers: Provider[] = [
   GoogleProvider({
-    clientId: process.env.GOOGLE_CLIENT_ID!,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     authorization: {
       params: {
         prompt: 'consent',
@@ -32,68 +45,20 @@ const providers: Provider[] = [
       name: { label: 'Name', type: 'text' },
       mode: { label: 'Mode', type: 'text' },
     },
-    async authorize(credentials) {
-      if (!credentials?.email || !credentials?.password) {
-        throw new Error('Email and password required');
+    async authorize(credentials): Promise<AppUser | null> {
+      if (!credentials?.email) throw new Error('Email required');
+
+      if (!credentials?.password?.trim()) throw new Error('Password required');
+
+      if (credentials.mode === 'signup' && credentials.password.length < 8) {
+        throw new Error('Password does not meet minimum requirements');
       }
 
-      const { email, mode, name } = credentials;
+      const { email, mode, name, password } = credentials;
 
-      return {
-        id: email,
-        email,
-        name,
-        mode,
-      };
-
-      //   if (mode === 'signup') {
-      //     const existingUser = await userStore.getUserByEmail(email);
-      //     if (existingUser) {
-      //       throw new Error('User already exists');
-      //     }
-
-      //     const passwordHash = await hashPasswordBcrypt(password);
-      //     const user = await userStore.createUser({
-      //       email,
-      //       name: name || email.split('@')[0],
-      //       passwordHash,
-      //       provider: 'credentials',
-      //     });
-
-      //     return {
-      //       id: user.id,
-      //       email: user.email,
-      //       name: user.name,
-      //       provider: 'credentials',
-      //     };
-      //   } else {
-      //     const user = await userStore.getUserByEmail(email);
-      //     if (!user) {
-      //       throw new Error('Invalid credentials');
-      //     }
-
-      //     if (user.provider !== 'credentials') {
-      //       throw new Error(
-      //         `This account uses ${user.provider} sign-in. Please use that method instead.`,
-      //       );
-      //     }
-
-      //     if (!user.passwordHash) {
-      //       throw new Error('No password set for this account');
-      //     }
-
-      //     const isValid = await verifyPassword(password, user.passwordHash);
-      //     if (!isValid) {
-      //       throw new Error('Invalid credentials');
-      //     }
-
-      //     return {
-      //       id: user.id,
-      //       email: user.email,
-      //       name: user.name,
-      //       provider: 'credentials',
-      //     };
-      //   }
+      return mode === 'signup'
+        ? authorizeSignUp({ name: name ?? '', email, password })
+        : authorizeSignIn({ email, password });
     },
   }),
 ];
@@ -102,36 +67,62 @@ export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async signIn({ user, account }) {
-      //if (account?.provider === 'google') {
-      //const existingUser = await userStore.getUserByEmail(user.email!);
-      // if (!existingUser) {
-      //   const newUser = await userStore.createUser({
-      //     email: user.email!,
-      //     name: user.name || user.email!.split('@')[0],
-      //     provider: 'google',
-      //   });
-      //   user.id = newUser.id;
-      // } else {
-      //   if (existingUser.provider === 'credentials') {
-      //     throw new Error(
-      //       'This email is already registered with password. Please sign in with your password.',
-      //     );
-      //   }
-      //   user.id = existingUser.id;
-      //}
-      // }
+      if (account?.provider === 'google' && user.email) {
+        const existingUser = await getUserByEmail(user.email);
+        if (existingUser) {
+          user.id = existingUser.$id;
+        } else {
+          try {
+            const doc = await createGoogleUser({
+              email: user.email,
+              name: user.name ?? user.email.split('@')[0],
+              image: user.image,
+              id: user.id,
+            });
+            user.id = doc.$id;
+          } catch {
+            const racedUser = await getUserByEmail(user.email);
+            if (!racedUser)
+              throw new Error(
+                'Failed to resolve Google user after create race',
+              );
+            user.id = racedUser.$id;
+          }
+        }
+      }
+
       return true;
     },
 
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session: updateSession }) {
+      // When client claims emailVerified: true, re-verify against Appwrite
+      if (
+        trigger === 'update' &&
+        updateSession?.emailVerified === true &&
+        token.id
+      ) {
+        const { users } = new SessionService().createAdminSession();
+        const appwriteAccount = await users.get({ userId: token.id as string });
+        token.emailVerified = appwriteAccount.emailVerification;
+      }
+
       if (user) {
         token.accessToken = account?.access_token;
         token.id = user.id;
-        token.provider =
-          (user as { provider?: string }).provider ||
-          account?.provider ||
-          'credentials';
+
+        if (isAppUser(user)) {
+          token.provider = user.provider;
+          token.emailVerified = user.emailVerified ?? false;
+          token.otpUserId = user.otpUserId;
+        } else {
+          token.provider = account?.provider as
+            | 'google'
+            | 'credentials'
+            | undefined;
+          token.emailVerified = account?.provider === 'google';
+        }
       }
+
       return token;
     },
 
@@ -140,6 +131,8 @@ export const authOptions: NextAuthOptions = {
         session.accessToken = token.accessToken as string | undefined;
         session.user.id = token.id || '';
         session.user.provider = token.provider || 'credentials';
+        session.user.emailVerified = token.emailVerified;
+        session.user.otpUserId = token.otpUserId;
       }
 
       return session;

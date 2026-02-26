@@ -1,5 +1,5 @@
 import { AuthForm } from '../../core/auth/AuthForm';
 
-const SignUp = () => <AuthForm type="sign-up" />;
+const SignUp = () => <AuthForm mode="sign-up" />;
 
 export default SignUp;

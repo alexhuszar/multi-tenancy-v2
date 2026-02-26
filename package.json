@@ -72,5 +72,8 @@
     "apps/*",
     "libs/*",
     "libs/services/*"
-  ]
+  ],
+  "dependencies": {
+    "node-appwrite": "^22.1.2"
+  }
 }

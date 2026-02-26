@@ -1,5 +1,8 @@
 import 'next-auth';
 import 'next-auth/jwt';
+import type { AppUserFields } from './auth';
+
+export type { AppUserFields };
 
 declare module 'next-auth' {
   interface Session {
@@ -9,15 +12,13 @@ declare module 'next-auth' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      provider?: string;
-    };
+    } & AppUserFields;
   }
 }
 
 declare module 'next-auth/jwt' {
-  interface JWT {
+  interface JWT extends AppUserFields {
     id?: string;
-    provider?: string;
     accessToken?: string;
   }
 }

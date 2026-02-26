@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import * as z from 'zod';
@@ -22,22 +22,51 @@ import { Button } from '../../components/Button';
 import { signInSchema, signUpSchema } from './auth.schemas';
 import googleIcon from '../../../public/assets/images/google-24px.svg';
 
-type FormType = 'sign-in' | 'sign-up';
+type FormMode = 'sign-in' | 'sign-up';
 
 type SignInValues = z.infer<typeof signInSchema>;
 type SignUpValues = z.infer<typeof signUpSchema>;
 
-export const AuthForm = ({ type }: { type: FormType }) => {
+const authConfig = {
+  'sign-in': {
+    title: 'Sign In',
+    schema: signInSchema,
+    submitLabel: 'Sign In',
+    linkHref: '/sign-up',
+    linkLabel: 'Sign Up',
+    linkPrompt: "Don't have an account?",
+    showNameField: false,
+  },
+  'sign-up': {
+    title: 'Create Account',
+    schema: signUpSchema,
+    submitLabel: 'Create Account',
+    linkHref: '/sign-in',
+    linkLabel: 'Sign In',
+    linkPrompt: 'Already have an account?',
+    showNameField: true,
+  },
+} as const;
+
+export const AuthForm = ({ mode }: { mode: FormMode }) => {
   const router = useRouter();
   const { signUp, signIn } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const schema = type === 'sign-up' ? signUpSchema : signInSchema;
+  const errorRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (error && errorRef.current) {
+      errorRef.current.focus();
+    }
+  }, [error]);
+
+  const config = authConfig[mode];
 
   const form = useForm<SignUpValues>({
-    resolver: zodResolver(schema) as unknown as Resolver<SignUpValues>,
+    resolver: zodResolver(config.schema) as unknown as Resolver<SignUpValues>,
     defaultValues: {
       email: '',
       password: '',
@@ -51,18 +80,22 @@ export const AuthForm = ({ type }: { type: FormType }) => {
     setError('');
 
     try {
-      if (type === 'sign-up') {
+      if (mode === 'sign-up') {
         const data = values as SignUpValues;
         const result = await signUp(data.fullName, data.email, data.password);
 
-        if (result?.error) setError(result.error);
-        else router.push('/');
+        if (result?.error) {
+          setError(result.error);
+        }
       } else {
         const data = values as SignInValues;
         const result = await signIn(data.email, data.password);
 
-        if (result?.error) setError(result.error);
-        else router.push('/');
+        if (result?.error) {
+          setError(result.error);
+        } else {
+          router.push('/');
+        }
       }
     } catch {
       setError('Something went wrong. Please try again.');
@@ -85,10 +118,8 @@ export const AuthForm = ({ type }: { type: FormType }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="form-container">
-        <h1 className="form-title">
-          {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
-        </h1>
-        {type === 'sign-up' && (
+        <h1 className="form-title">{config.title}</h1>
+        {config.showNameField && (
           <FormField
             control={form.control}
             name="fullName"
@@ -126,8 +157,7 @@ export const AuthForm = ({ type }: { type: FormType }) => {
             </FormItem>
           )}
         />
-
-        {type === 'sign-up' && (
+        {config.showNameField && (
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -147,9 +177,18 @@ export const AuthForm = ({ type }: { type: FormType }) => {
           variant="primary"
           className="mt-4 w-full"
         >
-          {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
+          {config.submitLabel}
         </Button>
-        {error && <p className="form-message" role="alert" aria-live="assertive">*{error}</p>}
+        {error && (
+          <p
+            ref={errorRef}
+            tabIndex={-1}
+            role="alert"
+            className="form-message"
+          >
+            *{error}
+          </p>
+        )}
         <Button
           type="button"
           variant="outline"
@@ -163,14 +202,9 @@ export const AuthForm = ({ type }: { type: FormType }) => {
           </span>
         </Button>
         <p className="mt-4 text-center">
-          {type === 'sign-in'
-            ? "Don't have an account?"
-            : 'Already have an account?'}
-          <Link
-            href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-            className="text-primary ml-1 font-medium"
-          >
-            {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+          {config.linkPrompt}
+          <Link href={config.linkHref} className="ml-1 font-medium text-primary">
+            {config.linkLabel}
           </Link>
         </p>
       </form>
