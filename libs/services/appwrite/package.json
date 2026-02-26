@@ -1,5 +1,5 @@
 {
-  "name": "@multi-tenancy/services",
+  "name": "@multi-tenancy/appwrite",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -20,61 +20,6 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    },
-    "./primitives": {
-      "@multi-tenancy/source": {
-        "types": "./src/primitives/index.ts",
-        "default": "./src/primitives/index.ts"
-      },
-      "import": {
-        "types": "./dist/primitives/index.d.ts",
-        "default": "./dist/primitives/index.js"
-      },
-      "default": "./src/primitives/index.ts"
-    },
-    "./patterns": {
-      "@multi-tenancy/source": {
-        "types": "./src/patterns/index.ts",
-        "default": "./src/patterns/index.ts"
-      },
-      "import": {
-        "types": "./dist/patterns/index.d.ts",
-        "default": "./dist/patterns/index.js"
-      },
-      "default": "./src/patterns/index.ts"
-    },
-    "./hooks": {
-      "@multi-tenancy/source": {
-        "types": "./src/hooks/index.ts",
-        "default": "./src/hooks/index.ts"
-      },
-      "import": {
-        "types": "./dist/hooks/index.d.ts",
-        "default": "./dist/hooks/index.js"
-      },
-      "default": "./src/hooks/index.ts"
-    },
-    "./tokens": {
-      "@multi-tenancy/source": {
-        "types": "./src/tokens/index.ts",
-        "default": "./src/tokens/index.ts"
-      },
-      "import": {
-        "types": "./dist/tokens/index.d.ts",
-        "default": "./dist/tokens/index.js"
-      },
-      "default": "./src/tokens/index.ts"
-    },
-    "./utils": {
-      "@multi-tenancy/source": {
-        "types": "./src/utils/index.ts",
-        "default": "./src/utils/index.ts"
-      },
-      "import": {
-        "types": "./dist/utils/index.d.ts",
-        "default": "./dist/utils/index.js"
-      },
-      "default": "./src/utils/index.ts"
     },
     "./package.json": "./package.json"
   },

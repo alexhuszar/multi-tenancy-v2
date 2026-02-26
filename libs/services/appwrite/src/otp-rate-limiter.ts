@@ -1,7 +1,8 @@
-import { ID, Query, TablesDB } from 'node-appwrite';
+import { createHash } from 'crypto';
+import { AppwriteException, Query, TablesDB } from 'node-appwrite';
 import { appwriteConfig } from './appwrite-config';
 
-const SEND_COOLDOWN_MS = 30_000;          // 30 seconds between sends
+const SEND_COOLDOWN_MS = 30_000; // 30 seconds between sends
 const MAX_VERIFY_ATTEMPTS = 5;
 const VERIFY_WINDOW_MS = 15 * 60 * 1000; // 15-minute window
 
@@ -11,13 +12,18 @@ export function isRateLimitError(error: unknown): error is RateLimitError {
   return error instanceof Error && error.name === 'RateLimitError';
 }
 
-function createRateLimitError(retryAfterMs: number, message: string): RateLimitError {
+function createRateLimitError(
+  retryAfterMs: number,
+  message: string,
+): RateLimitError {
   const err = new Error(message) as RateLimitError;
   err.name = 'RateLimitError';
   err.retryAfterMs = retryAfterMs;
   return err;
 }
 
+const toDeterministicRowId = (key: string) =>
+  `rl_${createHash('sha256').update(key).digest('hex').slice(0, 32)}`;
 
 type RateLimitRow = {
   $id: string;
@@ -39,7 +45,6 @@ export class AppwriteRateLimiter {
     if (elapsed < SEND_COOLDOWN_MS) {
       const retryAfterMs = SEND_COOLDOWN_MS - elapsed;
 
-      
       throw createRateLimitError(
         retryAfterMs,
         `Please wait ${Math.ceil(retryAfterMs / 1000)} seconds before requesting a new code.`,
@@ -75,7 +80,10 @@ export class AppwriteRateLimiter {
 
     if (record.count >= MAX_VERIFY_ATTEMPTS) {
       const lockedUntil = record.window_start + VERIFY_WINDOW_MS;
-      await this.upsertRecord(`verify:${userId}`, { ...record, locked_until: lockedUntil });
+      await this.upsertRecord(`verify:${userId}`, {
+        ...record,
+        locked_until: lockedUntil,
+      });
       throw createRateLimitError(
         lockedUntil - now,
         `Too many failed attempts. Try again in ${Math.ceil((lockedUntil - now) / 60000)} minutes.`,
@@ -95,7 +103,10 @@ export class AppwriteRateLimiter {
         last_sent_at: null,
       });
     } else {
-      await this.upsertRecord(`verify:${userId}`, { ...record, count: record.count + 1 });
+      await this.upsertRecord(`verify:${userId}`, {
+        ...record,
+        count: record.count + 1,
+      });
     }
   }
 
@@ -117,20 +128,26 @@ export class AppwriteRateLimiter {
     key: string,
     data: Omit<RateLimitRow, '$id' | 'key'>,
   ): Promise<void> {
-    const existing = await this.getRecord(key);
-
-    if (existing) {
-      await this.tablesDB.updateRow({
-        databaseId: appwriteConfig.databaseId,
-        tableId: appwriteConfig.otpRateLimitsCollectionId,
-        rowId: existing.$id,
-        data,
-      });
-    } else {
+    const rowId = toDeterministicRowId(key);
+    try {
       await this.tablesDB.createRow({
         databaseId: appwriteConfig.databaseId,
         tableId: appwriteConfig.otpRateLimitsCollectionId,
-        rowId: ID.unique(),
+        rowId,
+        data: { key, ...data },
+      });
+    } catch (error) {
+      // Only fall back to update if this is a conflict error (row exists)
+      const isConflict =
+        error instanceof AppwriteException &&
+        (error.code === 409 || error.type === 'document_already_exists');
+
+      if (!isConflict) throw error;
+
+      await this.tablesDB.updateRow({
+        databaseId: appwriteConfig.databaseId,
+        tableId: appwriteConfig.otpRateLimitsCollectionId,
+        rowId,
         data: { key, ...data },
       });
     }

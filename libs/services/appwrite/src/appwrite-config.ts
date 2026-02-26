@@ -1,11 +1,18 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import 'server-only';
+
+const requiredEnv = (name: string) => {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required env: ${name}`);
+  return value;
+};
+
 export const appwriteConfig = {
-  endpointUrl: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!,
-  projectId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!,
-  databaseId: process.env.NEXT_PUBLIC_C_APPWRITE_DATABASE!,
-  usersCollectionId: process.env.NEXT_PUBLIC_C_APPWRITE_USERS!,
-  filesCollectionId: process.env.NEXT_PUBLIC_C_APPWRITE_FILES!,
-  bucketId: process.env.NEXT_PUBLIC_C_APPWRITE_BUCKET!,
-  secretKey: process.env.NEXT_APPWRITE_SECRET!,
-  otpRateLimitsCollectionId: process.env.APPWRITE_C_OTP_RATE_LIMITS!,
+  endpointUrl: requiredEnv('NEXT_PUBLIC_APPWRITE_ENDPOINT'),
+  projectId: requiredEnv('NEXT_PUBLIC_APPWRITE_PROJECT_ID'),
+  databaseId: requiredEnv('NEXT_PUBLIC_C_APPWRITE_DATABASE'),
+  usersCollectionId: requiredEnv('NEXT_PUBLIC_C_APPWRITE_USERS'),
+  filesCollectionId: requiredEnv('NEXT_PUBLIC_C_APPWRITE_FILES'),
+  bucketId: requiredEnv('NEXT_PUBLIC_C_APPWRITE_BUCKET'),
+  secretKey: requiredEnv('NEXT_APPWRITE_SECRET'),
+  otpRateLimitsCollectionId: requiredEnv('APPWRITE_C_OTP_RATE_LIMITS'),
 };

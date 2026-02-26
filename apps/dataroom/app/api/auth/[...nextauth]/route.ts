@@ -4,8 +4,14 @@ import type { AppUserFields } from '../../../types/auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { SessionService } from '@multi-tenancy/appwrite';
-import { getUserByEmail, createGoogleUser } from '../../../actions/user.actions';
-import { authorizeSignUp, authorizeSignIn } from '../../../actions/auth.service';
+import {
+  getUserByEmail,
+  createGoogleUser,
+} from '../../../actions/user.actions';
+import {
+  authorizeSignUp,
+  authorizeSignIn,
+} from '../../../actions/auth.service';
 
 type AppUser = User & AppUserFields;
 const isAppUser = (user: User): user is AppUser => 'emailVerified' in user;
@@ -41,7 +47,15 @@ const providers: Provider[] = [
     },
     async authorize(credentials): Promise<AppUser | null> {
       if (!credentials?.email) throw new Error('Email required');
+
+      if (!credentials?.password?.trim()) throw new Error('Password required');
+
+      if (credentials.mode === 'signup' && credentials.password.length < 8) {
+        throw new Error('Password does not meet minimum requirements');
+      }
+
       const { email, mode, name, password } = credentials;
+
       return mode === 'signup'
         ? authorizeSignUp({ name: name ?? '', email, password })
         : authorizeSignIn({ email, password });
@@ -55,17 +69,25 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if (account?.provider === 'google' && user.email) {
         const existingUser = await getUserByEmail(user.email);
-
-        if (!existingUser) {
-          const doc = await createGoogleUser({
-            email: user.email,
-            name: user.name ?? user.email.split('@')[0],
-            image: user.image,
-            id: user.id,
-          });
-          user.id = doc.$id;
-        } else {
+        if (existingUser) {
           user.id = existingUser.$id;
+        } else {
+          try {
+            const doc = await createGoogleUser({
+              email: user.email,
+              name: user.name ?? user.email.split('@')[0],
+              image: user.image,
+              id: user.id,
+            });
+            user.id = doc.$id;
+          } catch {
+            const racedUser = await getUserByEmail(user.email);
+            if (!racedUser)
+              throw new Error(
+                'Failed to resolve Google user after create race',
+              );
+            user.id = racedUser.$id;
+          }
         }
       }
 
@@ -74,12 +96,14 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user, account, trigger, session: updateSession }) {
       // When client claims emailVerified: true, re-verify against Appwrite
-      if (trigger === 'update' && updateSession?.emailVerified === true && token.id) {
+      if (
+        trigger === 'update' &&
+        updateSession?.emailVerified === true &&
+        token.id
+      ) {
         const { users } = new SessionService().createAdminSession();
         const appwriteAccount = await users.get({ userId: token.id as string });
         token.emailVerified = appwriteAccount.emailVerification;
-      } else if (trigger === 'update' && updateSession?.emailVerified !== undefined) {
-        token.emailVerified = updateSession.emailVerified;
       }
 
       if (user) {
@@ -91,7 +115,10 @@ export const authOptions: NextAuthOptions = {
           token.emailVerified = user.emailVerified ?? false;
           token.otpUserId = user.otpUserId;
         } else {
-          token.provider = account?.provider as 'google' | 'credentials' | undefined;
+          token.provider = account?.provider as
+            | 'google'
+            | 'credentials'
+            | undefined;
           token.emailVerified = account?.provider === 'google';
         }
       }

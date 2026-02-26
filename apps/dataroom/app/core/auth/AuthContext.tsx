@@ -25,7 +25,11 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  signUp: (name: string, email: string, password: string) => Promise<AuthResult>;
+  signUp: (
+    name: string,
+    email: string,
+    password: string,
+  ) => Promise<AuthResult>;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
 }
@@ -66,11 +70,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (result?.ok) {
           const freshSession = await getSession();
-          if (freshSession?.user?.emailVerified === false && freshSession?.user?.otpUserId) {
+          if (
+            freshSession?.user?.emailVerified === false &&
+            freshSession?.user?.otpUserId
+          ) {
             router.push(`/verify-email?userId=${freshSession.user.otpUserId}`);
             return null;
           }
-          return { accountId: freshSession?.user?.id ?? '' };
+          if (!freshSession?.user?.id) {
+            return {
+              accountId: '',
+              error: 'Authentication failed. Please try again.',
+            };
+          }
+          return { accountId: freshSession.user.id };
         }
 
         if (result?.error) {

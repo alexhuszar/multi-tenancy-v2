@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Loader2Icon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Button } from '../../components/Button';
@@ -39,10 +40,12 @@ export function VerifyEmailForm() {
         body: JSON.stringify({ userId, secret: otp }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        setError(data.error ?? 'Verification failed. Please try again.');
+        const data = await response.json().catch(() => ({}));
+        setError(
+          (data as { error?: string }).error ??
+            'Verification failed. Please try again.',
+        );
         return;
       }
 
@@ -67,7 +70,7 @@ export function VerifyEmailForm() {
         maxLength={6}
         value={otp}
         onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-        className="form-input w-full tracking-widest text-center text-lg"
+        className="form-input w-full text-center text-lg tracking-widest"
         placeholder="000000"
         aria-label="OTP code"
       />
@@ -80,6 +83,8 @@ export function VerifyEmailForm() {
         type="button"
         variant="primary"
         className="mt-4 w-full"
+        isLoading={loading}
+        loadingIcon={<Loader2Icon />}
         onClick={handleVerify}
         disabled={loading || otp.length !== 6}
       >

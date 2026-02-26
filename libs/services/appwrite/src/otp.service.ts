@@ -13,18 +13,22 @@ export class OtpService {
 
     await this.rateLimiter.checkSendCooldown(email);
 
+    let createdUserId: string;
+
     try {
       const result = await this.account.createEmailToken({
         userId: ID.unique(),
         email,
       });
 
-      return { userId: result.userId };
+      createdUserId = result.userId;
     } catch (error) {
       this.handleAppwriteError(error, 'Failed to send OTP email');
     }
 
     await this.rateLimiter.recordEmailSend(email);
+
+    return { userId: createdUserId! };
   }
 
   async verifySession(
@@ -44,16 +48,19 @@ export class OtpService {
       this.handleAppwriteError(error, 'OTP verification failed');
     }
 
-    await this.rateLimiter.resetVerifyLimit(userId);
+    try {
+      await this.rateLimiter.resetVerifyLimit(userId);
+    } catch {
+      console.warn(`Failed to reset verify limit for ${userId}`);
+    }
 
-    // Clean up the ephemeral OTP session and user — no longer needed after verification
     if (this.users && session) {
       try {
         await this.users.deleteSession({ userId, sessionId: session.$id });
-      } catch { /* Non-fatal: session expires naturally */ }
+      } catch {}
       try {
         await this.users.delete({ userId });
-      } catch { /* Non-fatal: user cleanup is best-effort */ }
+      } catch {}
     }
 
     return { success: true };

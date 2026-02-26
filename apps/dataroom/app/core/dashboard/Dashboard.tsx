@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../auth/AuthContext';
 import { Search } from '../../components/Search';
 import { Loading } from '../../components/Loading';
@@ -8,8 +10,16 @@ import { FolderButton } from '../../components/FolderButton';
 
 export const Dashboard = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/sign-in');
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading) return <Loading />;
+  if (!isAuthenticated) return <Loading />;
 
   return (
     <section className="flex h-full flex-col gap-4 overflow-auto p-4 xl:p-8">
