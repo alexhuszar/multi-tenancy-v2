@@ -17,7 +17,7 @@ export async function authorizeSignUp(params: {
     password: params.password,
   });
 
-  const { userId } = await sendEmailOtp(params.email);
+  const { userId } = await sendEmailOtp(params.email, accountId);
 
   return {
     id: accountId,
@@ -62,7 +62,7 @@ export async function authorizeSignIn(params: {
   const appwriteAccount = await users.get({ userId: appwriteSession.userId });
 
   if (!appwriteAccount.emailVerification) {
-    const { userId } = await sendEmailOtp(params.email);
+    const { userId } = await sendEmailOtp(params.email, appwriteSession.userId);
     return {
       id: appwriteUser.accountId,
       email: params.email,

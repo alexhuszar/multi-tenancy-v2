@@ -19,7 +19,7 @@ export type DigitCodeProps = {
   invalid?: boolean;
   autoFocus?: boolean;
   className?: string;
-  inputClassName: string;
+  inputClassName?: string;
   'aria-label'?: string;
   'aria-describedby'?: string;
 };
@@ -152,6 +152,7 @@ export const DigitCode: FC<DigitCodeProps> = ({
 
       {Array.from({ length }).map((_, index) => (
         <input
+        name={`one-time-code-${index}`}
           key={index}
           ref={(el) => { inputRefs.current[index] = el; }}
           type="text"

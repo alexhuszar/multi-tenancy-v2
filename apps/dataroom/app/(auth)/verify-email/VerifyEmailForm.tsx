@@ -1,10 +1,23 @@
 'use client';
 
-import { useState } from 'react';
 import { Loader2Icon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@multi-tenancy/design-system';
 import { Button } from '../../components/Button';
+import { DigitCode } from '../../components/DigitCode';
+import {
+  verifyEmailSchema,
+  VerifyEmailValues,
+} from '../../core/auth/auth.schemas';
 
 export function VerifyEmailForm() {
   const router = useRouter();
@@ -12,9 +25,10 @@ export function VerifyEmailForm() {
   const { update } = useSession();
   const userId = searchParams.get('userId') ?? '';
 
-  const [otp, setOtp] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const form = useForm<VerifyEmailValues>({
+    resolver: zodResolver(verifyEmailSchema),
+    defaultValues: { otp: '' },
+  });
 
   if (!userId) {
     return (
@@ -24,15 +38,7 @@ export function VerifyEmailForm() {
     );
   }
 
-  const handleVerify = async () => {
-    if (otp.length !== 6) {
-      setError('Please enter the 6-digit code');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
+  const onSubmit: SubmitHandler<VerifyEmailValues> = async ({ otp }) => {
     try {
       const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
@@ -42,54 +48,72 @@ export function VerifyEmailForm() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        setError(
-          (data as { error?: string }).error ??
+        form.setError('root', {
+          message:
+            (data as { error?: string }).error ??
             'Verification failed. Please try again.',
-        );
+        });
         return;
       }
 
       await update({ emailVerified: true });
       router.push('/');
     } catch {
-      setError('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
+      form.setError('root', {
+        message: 'Something went wrong. Please try again.',
+      });
     }
   };
 
   return (
-    <div className="form-container">
-      <h1 className="form-title">Verify your email</h1>
-      <p className="mb-4 text-sm text-gray-600">
-        Enter the 6-digit code sent to your email address.
-      </p>
-      <input
-        type="text"
-        inputMode="numeric"
-        maxLength={6}
-        value={otp}
-        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-        className="form-input w-full text-center text-lg tracking-widest"
-        placeholder="000000"
-        aria-label="OTP code"
-      />
-      {error && (
-        <p className="form-message" role="alert" aria-live="assertive">
-          *{error}
-        </p>
-      )}
-      <Button
-        type="button"
-        variant="primary"
-        className="mt-4 w-full"
-        isLoading={loading}
-        loadingIcon={<Loader2Icon />}
-        onClick={handleVerify}
-        disabled={loading || otp.length !== 6}
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="form-container"
       >
-        {loading ? 'Verifying...' : 'Verify Email'}
-      </Button>
-    </div>
+        <h1 className="form-title">Verify your email</h1>
+        <p className="mb-4 text-sm text-center sm:text-start">
+          Enter the 6-digit code sent to your email address.
+        </p>
+
+        <FormField
+          control={form.control}
+          name="otp"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <DigitCode
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  length={6}
+                  autoFocus
+                  invalid={!!form.formState.errors.otp}
+                  disabled={form.formState.isSubmitting}
+                  variant='secondary'
+                />
+              </FormControl>
+              <FormMessage className="form-message" />
+            </FormItem>
+          )}
+        />
+
+        {form.formState.errors.root && (
+          <p className="form-message" role="alert" aria-live="assertive">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+
+        <Button
+          type="submit"
+          variant="primary"
+          className="mt-4 w-full"
+          isLoading={form.formState.isSubmitting}
+          loadingIcon={<Loader2Icon />}
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? 'Verifying...' : 'Verify Email'}
+        </Button>
+      </form>
+    </Form>
   );
 }

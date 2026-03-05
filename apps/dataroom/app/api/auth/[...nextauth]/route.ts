@@ -102,7 +102,11 @@ export const authOptions: NextAuthOptions = {
         token.id
       ) {
         const { users } = new SessionService().createAdminSession();
-        const appwriteAccount = await users.get({ userId: token.id as string });
+       
+        const appwriteAccount = await users.get({
+          userId: token.id as string,
+        });
+        
         token.emailVerified = appwriteAccount.emailVerification;
       }
 

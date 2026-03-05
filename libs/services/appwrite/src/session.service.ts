@@ -1,4 +1,11 @@
-import { Client, Account, TablesDB, Storage, Avatars, Users } from 'node-appwrite';
+import {
+  Client,
+  Account,
+  TablesDB,
+  Storage,
+  Avatars,
+  Users,
+} from 'node-appwrite';
 import { appwriteConfig } from './appwrite-config';
 
 export class AppwriteClientFactory {
@@ -25,54 +32,105 @@ export class AppwriteClientFactory {
   }
 }
 
+export class AppwriteSession {
+  readonly account: Account;
+  readonly tablesDB?: TablesDB;
+  readonly storage?: Storage;
+  readonly avatars?: Avatars;
+  readonly users?: Users;
+
+  constructor(client: Client, type: 'public' | 'user' | 'admin') {
+    this.account = new Account(client);
+
+    if (type !== 'public') {
+      this.tablesDB = new TablesDB(client);
+    }
+
+    if (type === 'admin') {
+      this.storage = new Storage(client);
+      this.avatars = new Avatars(client);
+      this.users = new Users(client);
+    }
+  }
+}
+
+// export class SessionService {
+//   createUserSession(sessionToken: string) {
+
+//     if (!sessionToken) {
+//       throw new Error('Missing session token');
+//     }
+
+//     const client = AppwriteClientFactory.createUserClient(sessionToken);
+
+//     return {
+//       get account() {
+//         return new Account(client);
+//       },
+//       get tablesDB() {
+//         return new TablesDB(client);
+//       },
+//     };
+//   }
+
+//   createPublicSession() {
+//     const client = AppwriteClientFactory.createPublicClient();
+
+//     return {
+//       get account() {
+//         return new Account(client);
+//       },
+//     };
+//   }
+
+//   createAdminSession() {
+//     const client = AppwriteClientFactory.createAdminClient();
+
+//     return {
+//       get account() {
+//         return new Account(client);
+//       },
+//       get tablesDB() {
+//         return new TablesDB(client);
+//       },
+//       get storage() {
+//         return new Storage(client);
+//       },
+//       get avatars() {
+//         return new Avatars(client);
+//       },
+//       get users() {
+//         return new Users(client);
+//       },
+//     };
+//   }
+// }
+
 export class SessionService {
-  createUserSession(sessionToken: string) {
-    
+  createUserSession(sessionToken: string): AppwriteSession {
     if (!sessionToken) {
       throw new Error('Missing session token');
     }
 
     const client = AppwriteClientFactory.createUserClient(sessionToken);
-
-    return {
-      get account() {
-        return new Account(client);
-      },
-      get tablesDB() {
-        return new TablesDB(client);
-      },
-    };
+    return new AppwriteSession(client, 'user');
   }
 
-  createPublicSession() {
+  createPublicSession(): AppwriteSession {
     const client = AppwriteClientFactory.createPublicClient();
-
-    return {
-      get account() {
-        return new Account(client);
-      },
-    };
+    return new AppwriteSession(client, 'public');
   }
 
-  createAdminSession() {
+  createAdminSession(): AppwriteSession & { users: Users; storage: Storage; avatars: Avatars } {
     const client = AppwriteClientFactory.createAdminClient();
+    const session = new AppwriteSession(client, 'admin');
 
-    return {
-      get account() {
-        return new Account(client);
-      },
-      get tablesDB() {
-        return new TablesDB(client);
-      },
-      get storage() {
-        return new Storage(client);
-      },
-      get avatars() {
-        return new Avatars(client);
-      },
-      get users() {
-        return new Users(client);
-      },
-    };
+    const { users, storage, avatars } = session;
+
+    if (!users || !storage || !avatars) {
+      throw new Error('Admin session initialization failed: missing required services');
+    }
+
+    return session as AppwriteSession & { users: Users; storage: Storage; avatars: Avatars };
   }
 }

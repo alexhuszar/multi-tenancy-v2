@@ -186,7 +186,7 @@ export const AuthForm = ({ mode }: { mode: FormMode }) => {
             role="alert"
             className="form-message"
           >
-            *{error}
+            {error}
           </p>
         )}
         <Button

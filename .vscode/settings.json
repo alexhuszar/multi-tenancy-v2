@@ -1,6 +1,6 @@
 {
   "tailwindCSS.experimental.configFile": {
-    "apps/dataroom/tailwind.config.js": "apps/dataroom/**",
+    "apps/dataroom/tailwind.config.ts": "apps/dataroom/**",
   },
   "tailwindCSS.includeLanguages": {
     "typescript": "javascript",
@@ -14,6 +14,8 @@
     "(?:className|contentClassName|wrapperClassName)\\s*=\\s*['\"`]([^'\"`]*)['\"`]"
   ],
   "editor.quickSuggestions": {
-    "strings": "on"
+    "strings": "on",
+    "other": "on",
+    "comments": "off"
   }
 }

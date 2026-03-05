@@ -8,27 +8,25 @@ export class OtpService {
     private readonly users?: Users,
   ) {}
 
-  async sendEmailToken(email: string): Promise<{ userId: string }> {
+  async sendEmailToken(email: string, userId?: string): Promise<{ userId: string }> {
     this.validateEmail(email);
 
     await this.rateLimiter.checkSendCooldown(email);
 
-    let createdUserId: string;
+    const targetUserId = userId ?? ID.unique();
 
     try {
-      const result = await this.account.createEmailToken({
-        userId: ID.unique(),
+      await this.account.createEmailToken({
+        userId: targetUserId,
         email,
       });
-
-      createdUserId = result.userId;
     } catch (error) {
       this.handleAppwriteError(error, 'Failed to send OTP email');
     }
 
     await this.rateLimiter.recordEmailSend(email);
 
-    return { userId: createdUserId! };
+    return { userId: targetUserId };
   }
 
   async verifySession(

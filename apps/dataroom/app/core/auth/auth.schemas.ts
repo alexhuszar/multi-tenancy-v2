@@ -23,3 +23,12 @@ export const signUpSchema = z
     path: ['confirmPassword'],
     message: 'Passwords do not match',
   });
+
+export const verifyEmailSchema = z.object({
+  otp: z
+    .string()
+    .length(6, 'Please enter the 6-digit code')
+    .regex(/^\d{6}$/, 'Code must contain only digits'),
+});
+
+export type VerifyEmailValues = z.infer<typeof verifyEmailSchema>;

@@ -3,18 +3,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function proxy(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const { pathname } = request.nextUrl;
 
   const isAuthPage =
-    request.nextUrl.pathname.startsWith('/sign-in') ||
-    request.nextUrl.pathname.startsWith('/sign-up');
+    pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up');
+  // const isVerifyPage = pathname.startsWith('/verify-email');
+
+  // if (token && token.emailVerified === false) {
+  //   if (isVerifyPage) return NextResponse.next();
+  //   const dest = new URL('/verify-email', request.url);
+  //   if (token.otpUserId) dest.searchParams.set('userId', String(token.otpUserId));
+  //   return NextResponse.redirect(dest);
+  // }
 
   if (isAuthPage && token) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
   if (!isAuthPage && !token) {
-    const signInUrl = new URL('/sign-in', request.url);
-    return NextResponse.redirect(signInUrl);
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   return NextResponse.next();

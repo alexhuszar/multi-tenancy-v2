@@ -68,6 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirect: false,
         });
 
+        debugger;
+
         if (result?.ok) {
           const freshSession = await getSession();
           if (

@@ -75,6 +75,7 @@ export class AppwriteRateLimiter {
 
     if (now - record.window_start > VERIFY_WINDOW_MS) {
       await this.deleteRecord(`verify:${userId}`);
+
       return;
     }
 

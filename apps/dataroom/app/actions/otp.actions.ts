@@ -7,14 +7,15 @@ import {
   isRateLimitError,
 } from '@multi-tenancy/appwrite';
 
-export const sendEmailOtp = async (email: string): Promise<{userId:string}> => {
+export const sendEmailOtp = async (email: string, userId?: string): Promise<{userId:string}> => {
   const session = new SessionService();
-  const { account, tablesDB } = session.createAdminSession();
-  const rateLimiter = new AppwriteRateLimiter(tablesDB);
+  const { account } = session.createPublicSession();
+  const { tablesDB } = session.createAdminSession();
+  const rateLimiter = new AppwriteRateLimiter(tablesDB!);
 
   try {
     const otpService = new OtpService(account, rateLimiter);
-    return await otpService.sendEmailToken(email);
+    return await otpService.sendEmailToken(email, userId);
   } catch (error) {
     if (isRateLimitError(error)) {
       throw error;
@@ -34,7 +35,7 @@ export const verifyEmailOtp = async ({
   const session = new SessionService();
   const { account } = session.createPublicSession();
   const { tablesDB, users } = session.createAdminSession();
-  const rateLimiter = new AppwriteRateLimiter(tablesDB);
+  const rateLimiter = new AppwriteRateLimiter(tablesDB!);
 
   try {
     const otpService = new OtpService(account, rateLimiter, users);
